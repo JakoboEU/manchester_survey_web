@@ -175,6 +175,21 @@ function App() {
                             </select>
                         </div>
 
+                        <div className="mb-4">
+                            <label htmlFor="age" className="form-label">
+                                <b>Participant confirmation</b>
+                                <p>By ticking the box below and clicking “Start survey,” you confirm that:</p>
+                                <ul>
+                                    <li>you agree to the <a href="../terms.html" target="terms">terms of service</a>,</li>
+                                    <li>you are 18+,</li>
+                                    <li>you have read and understood this Privacy Notice,</li>
+                                    <li>you understand the study is anonymous, only aggregated results will be shared, and individual records cannot be identified or deleted after submission, and</li>
+                                    <li>you consent to take part.</li>
+                                </ul>
+                            </label>
+                            <p>I agree and wish to continue <input type="checkbox" id="accept"/></p>
+                        </div>
+
                         <button type="submit" className="btn btn-primary w-100">
                             Submit
                         </button>
