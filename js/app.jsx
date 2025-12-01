@@ -1,14 +1,23 @@
 function App() {
     const [formData, setFormData] = React.useState({
-        name: "",
-        email: "",
-        favCity: "",
-        theme: "light",
+        gender: "",
+        age: "",
+        ethnicity: "",
+        education: "",
+        movement: "",
+        dog: "",
+        children: "",
+        garden: "",
+        acceptTerms: false,
     });
 
     function handleChange(event) {
         const { name, value } = event.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
+    function handleAcceptTerms(event) {
+        setFormData((prev) => ({ ...prev, ['acceptTerms']: !formData.acceptTerms }));
     }
 
     function handleSubmit(event) {
@@ -67,14 +76,14 @@ function App() {
                         </div>
 
                         <div className="mb-4">
-                            <label htmlFor="ethinicity" className="form-label">
+                            <label htmlFor="ethnicity" className="form-label">
                                 Which of the following best describes your ethnic background?
                             </label>
                             <select
-                                id="ethinicity"
-                                name="ethinicity"
+                                id="ethnicity"
+                                name="ethnicity"
                                 className="form-select"
-                                value={formData.ethinicity}
+                                value={formData.ethnicity}
                                 onChange={handleChange}
                             >
                                 <option value="">Choose…</option>
@@ -180,14 +189,13 @@ function App() {
                                 <b>Participant confirmation</b>
                                 <p>By ticking the box below and clicking “Start survey,” you confirm that:</p>
                                 <ul>
-                                    <li>you agree to the <a href="../terms.html" target="terms">terms of service</a>,</li>
                                     <li>you are 18+,</li>
-                                    <li>you have read and understood this Privacy Notice,</li>
+                                    <li>you have read and understood the <a href="../terms.html" target="terms">Privacy Notice</a>,</li>
                                     <li>you understand the study is anonymous, only aggregated results will be shared, and individual records cannot be identified or deleted after submission, and</li>
                                     <li>you consent to take part.</li>
                                 </ul>
                             </label>
-                            <p>I agree and wish to continue <input type="checkbox" id="accept"/></p>
+                            <p>I agree and wish to continue <input type="checkbox" id="accept" checked={formData.acceptTerms} onChange={handleAcceptTerms}/></p>
                         </div>
 
                         <button type="submit" className="btn btn-primary w-100">
