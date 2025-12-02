@@ -4,8 +4,8 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
     plugins: [react()],
-    base: "/",           // root, because it'll be pickthepark.org/
+    base: "manchester_survey_web/",
     build: {
-        outDir: "docs",    // or "dist" + a GitHub Action, if you prefer
+        outDir: "docs",
     },
 });
