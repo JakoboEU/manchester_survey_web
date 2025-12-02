@@ -1,6 +1,7 @@
 import { useState } from "react";
 import PolicyForm from "./components/PolicyForm.jsx";
 import DemographicsForm from "./components/DemographicsForm.jsx";
+import demographicsForm from "./components/DemographicsForm.jsx";
 
 function App() {
     const notSelectedValue = 'not-selected';
@@ -28,13 +29,16 @@ function App() {
                 ethnicity: notSelectedValue,
                 income: notSelectedValue,
                 education: notSelectedValue,
-                mobility: notSelectedValue,
+                movement: notSelectedValue,
                 dog: notSelectedValue,
                 children: notSelectedValue,
                 garden: notSelectedValue,
             }));
         }
     }
+
+    const isComplete = Object.keys(demographics).every((field) => !!demographics[field]);
+
     function handlePolicyAccepted() {
         setHasAcceptedPolicy(true);
     }
@@ -47,6 +51,9 @@ function App() {
     }
 
     function handleDemographicsSubmit() {
+        if (!demographicsForm) {
+            return
+        }
         console.log("Demographics submitted:", demographics);
         setIsSubmitted(true);
     }
@@ -59,9 +66,11 @@ function App() {
         content = (
             <DemographicsForm
                 formData={demographics}
+                enableSubmit={isComplete}
                 onChange={handleDemographicChange}
                 onSubmit={handleDemographicsSubmit}
                 notSelectedValue={notSelectedValue}
+                onSkipDemographics={onSkipDemographics}
             />
         );
     } else {

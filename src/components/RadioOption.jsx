@@ -6,7 +6,7 @@ function RadioOption({
                          selectedValue,
                          onChange,
                          label,
-                        helpLabel,
+                         helpLabel,
                          required = false
                      }) {
     const isChecked = selectedValue === value;

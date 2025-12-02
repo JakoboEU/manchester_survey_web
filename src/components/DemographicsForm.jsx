@@ -1,7 +1,7 @@
 import React from "react";
 import RadioGroup from "./RadioGroup";
 
-function DemographicsForm({ formData, onChange, onSubmit, onSkipDemographics, notSelectedValue }) {
+function DemographicsForm({ formData, onChange, enableSubmit, onSubmit, onSkipDemographics, notSelectedValue }) {
     const [skipDemographics, setSkipDemographics] = React.useState(false);
 
     function handleChange(event) {
@@ -11,7 +11,9 @@ function DemographicsForm({ formData, onChange, onSubmit, onSkipDemographics, no
 
     function handleSubmit(event) {
         event.preventDefault();
-        onSubmit();
+        if (enableSubmit) {
+            onSubmit();
+        }
     }
 
     const handleSkipDemographicsChange = (checked) => {
@@ -161,7 +163,7 @@ function DemographicsForm({ formData, onChange, onSubmit, onSkipDemographics, no
             </div>
             <form onSubmit={handleSubmit} className="needs-validation" noValidate>
                 {demographicsForm}
-                <button type="submit" className="btn btn-primary w-100">
+                <button type="submit" className="btn btn-primary w-100" disabled={!enableSubmit}>
                     Continue
                 </button>
             </form>
