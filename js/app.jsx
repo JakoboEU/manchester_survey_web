@@ -3,6 +3,7 @@ function App() {
         gender: "",
         age: "",
         ethnicity: "",
+        income: "",
         education: "",
         movement: "",
         dog: "",
@@ -38,7 +39,7 @@ function App() {
                     <form onSubmit={handleSubmit} className="needs-validation" noValidate>
                         <div className="mb-3">
                             <label htmlFor="gender" className="form-label">
-                                What is your gender?
+                                How would you describe your gender?
                             </label>
                             <select
                                 id="gender"
@@ -58,7 +59,7 @@ function App() {
 
                         <div className="mb-4">
                             <label htmlFor="age" className="form-label">
-                                Which age group are you in?
+                                Which age group best describes you?
                             </label>
                             <select
                                 id="age"
@@ -77,7 +78,7 @@ function App() {
 
                         <div className="mb-4">
                             <label htmlFor="ethnicity" className="form-label">
-                                Which of the following best describes your ethnic background?
+                                Which of these best describes your ethnic background? (Please choose the one that fits best.)
                             </label>
                             <select
                                 id="ethnicity"
@@ -95,7 +96,45 @@ function App() {
 
                         <div className="mb-4">
                             <label htmlFor="education" className="form-label">
-                                What is the highest level of education you have completed?
+                                Which option best matches the highest level of education you have completed?
+                            </label>
+                            <select
+                                id="education"
+                                name="education"
+                                className="form-select"
+                                value={formData.education}
+                                onChange={handleChange}
+                            >
+                                <option value="">Choose…</option>
+                                <option value="sixteen">Finished school at 16 or earlier (GCSEs or equivalent, or below)</option>
+                                <option value="eighteen">Finished school at 18 / higher or further education (no university degree)</option>
+                                <option value="older">University degree or higher (e.g. BA/BSc, Masters, PhD)</option>
+                                <option value="not-selected">Prefer not to say</option>
+                            </select>
+                        </div>
+
+                        <div className="mb-4">
+                            <label htmlFor="income" className="form-label">
+                                Thinking about your household as a whole, which of these broad income ranges best fits you (before tax)?
+                            </label>
+                            <select
+                                id="income"
+                                name="income"
+                                className="form-select"
+                                value={formData.movement}
+                                onChange={handleChange}
+                            >
+                                <option value="">Choose…</option>
+                                <option value="lower">Under £21,0000</option>
+                                <option value="middle">£21,000 - £45,000</option>
+                                <option value="higher">Over £45,000</option>
+                                <option value="not-selected">Prefer not to say</option>
+                            </select>
+                        </div>
+
+                        <div className="mb-4">
+                            <label htmlFor="education" className="form-label">
+                                Which option best matches the highest level of education you have completed?
                             </label>
                             <select
                                 id="education"
@@ -114,7 +153,7 @@ function App() {
 
                         <div className="mb-4">
                             <label htmlFor="movement" className="form-label">
-                                Do you have any long-term health condition or disability that limits how easily you can walk, stand, or get around outside the home?
+                                Do you have any long-term health condition or disability that affects how easy it is for you to walk, stand, or get around outside, if at all?
                             </label>
                             <select
                                 id="movement"
@@ -132,7 +171,7 @@ function App() {
 
                         <div className="mb-4">
                             <label htmlFor="dog" className="form-label">
-                                Do you have a dog in your household, or regularly walk a dog?
+                                Do you currently have a dog in your household, or do you regularly walk a dog?
                             </label>
                             <select
                                 id="dog"
@@ -150,7 +189,7 @@ function App() {
 
                         <div className="mb-4">
                             <label htmlFor="children" className="form-label">
-                                Are there any children under 18 living in your household?
+                                Are there any children under 18 living in your household, if you’re happy to say?
                             </label>
                             <select
                                 id="children"
@@ -168,7 +207,7 @@ function App() {
 
                         <div className="mb-4">
                             <label htmlFor="garden" className="form-label">
-                                Do you have access to a private garden at home?
+                                Do you have access to a private garden or outdoor space at home that you can use?
                             </label>
                             <select
                                 id="garden"
