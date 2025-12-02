@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+# Stop commit if the build fails
+npm run build || exit 1
+
+# If build succeeds, include docs/ in the commit
+git add docs
+

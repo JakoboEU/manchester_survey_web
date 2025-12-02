@@ -12,12 +12,9 @@ function PolicyForm({ onAccepted }) {
     return (
         <div className="card-body p-4">
             <h1 className="h4 mb-3 text-center">City Nature Choices</h1>
-            <p className="text-muted small text-center mb-4">
+            <p className="text-muted text-center mb-4">
                 In a quick series of A/B image choices, you’ll judge three things:
-                wildlife potential, personal safety, and local support. Basic
-                demographics help us understand which features matter to different
-                communities and ensure recommendations are fair and inclusive; results
-                are summarised only at group level.
+                wildlife potential, personal safety, and local support.
             </p>
 
             <form onSubmit={handleSubmit} className="needs-validation" noValidate>

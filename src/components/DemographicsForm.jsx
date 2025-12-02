@@ -13,13 +13,13 @@ function DemographicsForm({ formData, onChange, onSubmit }) {
 
     return (
         <div className="card-body p-4">
-            <h1 className="h4 mb-3 text-center">City Nature Choices</h1>
-            <p className="text-muted small text-center mb-4">
-                In a quick series of A/B image choices, you’ll judge three things:
-                wildlife potential, personal safety, and local support. Basic
-                demographics help us understand which features matter to different
-                communities and ensure recommendations are fair and inclusive; results
-                are summarised only at group level.
+            <h1 className="h4 mb-3 text-center">City Nature Choices: About You (Optional)</h1>
+            <p className="text-muted text-center mb-4">
+                The next few questions are about you and your household.
+                They help us understand whether people from different backgrounds see green spaces differently.
+            </p>
+            <p className="text-muted text-center mb-4">
+                You don’t have to answer any question you’d rather skip – just choose “Prefer not to say”.
             </p>
 
             <form onSubmit={handleSubmit} className="needs-validation" noValidate>
