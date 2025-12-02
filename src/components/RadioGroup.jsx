@@ -6,6 +6,7 @@ function RadioGroup({
                         name,
                         groupLabel,
                         selectedValue,
+                        notSelected,
                         onChange,
                         options,
                         required = false,
@@ -33,7 +34,7 @@ function RadioGroup({
                 <RadioOption
                     key='not-selected'
                     name={name}
-                    value="not-selected"
+                    value={notSelected}
                     selectedValue={selectedValue}
                     onChange={onChange}
                     required={required}

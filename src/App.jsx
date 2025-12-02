@@ -3,6 +3,8 @@ import PolicyForm from "./components/PolicyForm.jsx";
 import DemographicsForm from "./components/DemographicsForm.jsx";
 
 function App() {
+    const notSelectedValue = 'not-selected';
+
     const [hasAcceptedPolicy, setHasAcceptedPolicy] = useState(false);
     const [demographics, setDemographics] = useState({
         gender: "",
@@ -17,6 +19,22 @@ function App() {
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
 
+    const onSkipDemographics = (skip) => {
+        if (skip) {
+            setDemographics((prev) => ({
+                ...prev,
+                gender: notSelectedValue,
+                age: notSelectedValue,
+                ethnicity: notSelectedValue,
+                income: notSelectedValue,
+                education: notSelectedValue,
+                mobility: notSelectedValue,
+                dog: notSelectedValue,
+                children: notSelectedValue,
+                garden: notSelectedValue,
+            }));
+        }
+    }
     function handlePolicyAccepted() {
         setHasAcceptedPolicy(true);
     }
@@ -43,6 +61,7 @@ function App() {
                 formData={demographics}
                 onChange={handleDemographicChange}
                 onSubmit={handleDemographicsSubmit}
+                notSelectedValue={notSelectedValue}
             />
         );
     } else {
