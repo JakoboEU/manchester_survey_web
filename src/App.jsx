@@ -17,7 +17,6 @@ function App() {
     const notSelectedValue = 'not-selected';
     const localStoragePersonId = 'personId';
 
-
     const [personId, setPersonId] = useState(() => {
         return JSON.parse(localStorage.getItem(localStoragePersonId)) || null;
     });
