@@ -1,5 +1,5 @@
 import React from "react";
-import RadioGroup from "./RadioGroup";
+import RadioGroup from "./RadioGroup.jsx";
 
 function DemographicsForm({ formData, onChange, enableSubmit, onSubmit, onSkipDemographics, notSelectedValue }) {
     const [skipDemographics, setSkipDemographics] = React.useState(false);
@@ -23,6 +23,7 @@ function DemographicsForm({ formData, onChange, enableSubmit, onSubmit, onSkipDe
 
     const demographicsForm = !skipDemographics && (
         <>
+            <hr />
             <RadioGroup
                 name="gender"
                 groupLabel="How would you describe your gender?"

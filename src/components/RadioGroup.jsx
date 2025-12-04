@@ -1,6 +1,6 @@
 // RadioGroup.jsx
 import React from "react";
-import RadioOption from "./RadioOption";
+import RadioOption from "./RadioOption.jsx";
 
 function RadioGroup({
                         name,

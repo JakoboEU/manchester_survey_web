@@ -1,12 +1,23 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import PolicyForm from "./components/PolicyForm.jsx";
 import DemographicsForm from "./components/DemographicsForm.jsx";
-import demographicsForm from "./components/DemographicsForm.jsx";
+import HabitatRanking from "./components/HabitatRanking.jsx";
+
+const enumValue = (name) => Object.freeze({toString: () => name});
+
+const PageState = Object.freeze({
+    ACCEPT_POLICY: enumValue("AcceptPolicy"),
+    DEMOGRAPHICS: enumValue("Demographics"),
+    DEMOGRAPHICS_COMPLETE: enumValue("DemographicsComplete"),
+    RETURNED_USER: enumValue("ReturnedUser"),
+    SURVEY: enumValue("Survey")
+});
 
 function App() {
     const notSelectedValue = 'not-selected';
 
-    const [hasAcceptedPolicy, setHasAcceptedPolicy] = useState(false);
+    const [pageState, setPageState] = useState(PageState.ACCEPT_POLICY);
+    const [personId, setPersonId] = useState(null);
     const [demographics, setDemographics] = useState({
         gender: "",
         age: "",
@@ -18,9 +29,15 @@ function App() {
         children: "",
         garden: "",
     });
-    const [isSubmitted, setIsSubmitted] = useState(false);
 
-    const onSkipDemographics = (skip) => {
+
+    const isDemographicsComplete = Object.keys(demographics).every((field) => !!demographics[field]);
+
+    function handlePolicyAccepted() {
+        setPageState(PageState.DEMOGRAPHICS);
+    }
+
+    function onSkipDemographics(skip) {
         if (skip) {
             setDemographics((prev) => ({
                 ...prev,
@@ -37,12 +54,6 @@ function App() {
         }
     }
 
-    const isComplete = Object.keys(demographics).every((field) => !!demographics[field]);
-
-    function handlePolicyAccepted() {
-        setHasAcceptedPolicy(true);
-    }
-
     function handleDemographicChange(name, value) {
         setDemographics((prev) => ({
             ...prev,
@@ -51,29 +62,34 @@ function App() {
     }
 
     function handleDemographicsSubmit() {
-        if (!demographicsForm) {
+        if (!demographics) {
             return
         }
-        console.log("Demographics submitted:", demographics);
-        setIsSubmitted(true);
+        console.log("Demographics submitted:", demographics)
+        setPersonId('4454')
+        setPageState(PageState.DEMOGRAPHICS_COMPLETE);
+    }
+
+    function handleContinueToSurvey() {
+        setPageState(PageState.SURVEY);
     }
 
     let content;
 
-    if (!hasAcceptedPolicy) {
+    if (pageState === PageState.ACCEPT_POLICY) {
         content = <PolicyForm onAccepted={handlePolicyAccepted} />;
-    } else if (!isSubmitted) {
+    } else if (pageState === PageState.DEMOGRAPHICS) {
         content = (
             <DemographicsForm
                 formData={demographics}
-                enableSubmit={isComplete}
+                enableSubmit={isDemographicsComplete}
+                notSelectedValue={notSelectedValue}
                 onChange={handleDemographicChange}
                 onSubmit={handleDemographicsSubmit}
-                notSelectedValue={notSelectedValue}
                 onSkipDemographics={onSkipDemographics}
             />
         );
-    } else {
+    } else if (pageState === PageState.DEMOGRAPHICS_COMPLETE) {
         content = (
             <div className="card-body p-4 text-center">
                 <h1 className="h4 mb-3">Thank you</h1>
@@ -81,8 +97,29 @@ function App() {
                     Your demographic answers have been recorded. You can now continue to
                     the main part of the survey.
                 </p>
+                <form onSubmit={handleContinueToSurvey} noValidate>
+                    <button type="submit" className="btn btn-primary w-100">
+                        Continue
+                    </button>
+                </form>
             </div>
         );
+    } else if (pageState === PageState.RETURNED_USER) {
+        content = (
+            <div className="card-body p-4 text-center">
+                <h1 className="h4 mb-3">Welcome Back</h1>
+                <p className="text-muted">
+                    Click continue to the main part of the survey.
+                </p>
+                <form onSubmit={handleContinueToSurvey} noValidate>
+                    <button type="submit" className="btn btn-primary w-100">
+                        Continue
+                    </button>
+                </form>
+            </div>
+        );
+    } else if (pageState === PageState.SURVEY) {
+        content = <HabitatRanking personId={personId} />
     }
 
     return (
