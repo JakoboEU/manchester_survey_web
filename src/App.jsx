@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PolicyForm from "./components/PolicyForm.jsx";
 import DemographicsForm from "./components/DemographicsForm.jsx";
 import HabitatRanking from "./components/HabitatRanking.jsx";
@@ -15,9 +15,23 @@ const PageState = Object.freeze({
 
 function App() {
     const notSelectedValue = 'not-selected';
+    const localStoragePersonId = 'personId';
 
-    const [pageState, setPageState] = useState(PageState.ACCEPT_POLICY);
-    const [personId, setPersonId] = useState(null);
+
+    const [personId, setPersonId] = useState(() => {
+        return JSON.parse(localStorage.getItem(localStoragePersonId)) || null;
+    });
+    const [pageState, setPageState] = useState(() => {
+        if (personId === null) {
+            return PageState.ACCEPT_POLICY;
+        } else {
+            return PageState.RETURNED_USER;
+        }
+    });
+    useEffect(() => {
+        localStorage.setItem(localStoragePersonId, JSON.stringify(personId));
+    }, [personId]);
+
     const [demographics, setDemographics] = useState({
         gender: "",
         age: "",
