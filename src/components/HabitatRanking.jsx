@@ -1,8 +1,12 @@
-import React from "react";
-
+import React, { useState }  from "react";
+import { supabase } from "../lib/supabaseClient";
 
 function HabitatRanking({personId}) {
 
+    const [rankHabitat, setRankHabitat] = useState(() => {
+        const {data} = supabase.functions.invoke("next-pair", {body: {personId: personId}});
+        return JSON.parse(data)
+    });
     return (
         <div className="habitat-ranking card-body p-4">
             <h1 className="h4 mb-3 text-center">City Nature Choices</h1>

@@ -1,5 +1,12 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 
+const corsHeaders = {
+    "Access-Control-Allow-Origin": "*", // or lock this down later
+    "Access-Control-Allow-Headers":
+        "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
 type HabitatRank = {
     habitatWinner: number;
     habitatLoser: number;
@@ -26,6 +33,16 @@ function isBody(value: unknown): value is Body {
 curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/next-pair' --header 'Content-Type: application/json' --data '{"personId":"123"}'
  */
 Deno.serve(async (req) => {
+    if (req.method === "OPTIONS") {
+        return new Response("ok", { headers: corsHeaders });
+    }
+    if (req.method !== "POST") {
+        return new Response("Method not allowed", {
+            status: 405,
+            headers: corsHeaders,
+        });
+    }
+
     let json: unknown;
 
     try {
