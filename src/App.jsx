@@ -30,7 +30,6 @@ function App() {
         garden: "",
     });
 
-
     const isDemographicsComplete = Object.keys(demographics).every((field) => !!demographics[field]);
 
     function handlePolicyAccepted() {
@@ -120,6 +119,11 @@ function App() {
         );
     } else if (pageState === PageState.SURVEY) {
         content = <HabitatRanking personId={personId} />
+    } else {
+        content = <div className="card-body p-4">
+                <h1 className="h4 mb-3 text-center">City Nature Choices: Page Error</h1>
+                <p className="text-center mb-4">Invalid page state, please refresh the page in the browser.</p>
+            </div>
     }
 
     return (
