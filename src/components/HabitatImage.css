@@ -1,0 +1,14 @@
+.habitat-image {
+    width: 100%;
+    max-width: 480px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    aspect-ratio: 4 / 3;
+}
+
+.habitat-image-container {
+    min-height: 320px;
+    padding: 0;
+    margin: 0;
+}

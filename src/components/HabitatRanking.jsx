@@ -1,6 +1,7 @@
 import React, { useState, useEffect }  from "react";
 import { supabase } from "../lib/supabaseClient";
 import HabitatImage from "./HabitatImage.jsx";
+import "./HabitatRanking.css"
 
 function HabitatRanking({personId}) {
     const HOLDING_IMAGE = "./images/holding.png"
@@ -92,9 +93,11 @@ function HabitatRanking({personId}) {
                 </div>
             ) : (
                 <>
-                    <p className="mb-4">
-                        {question}
-                    </p>
+                    <div className="habitat-ranking-question-container">
+                        <p className="habitat-ranking-question mb-4">
+                            {question}
+                        </p>
+                    </div>
                     <HabitatImage
                         src={habitatImage1}
                         habitatWinner={rankHabitat? rankHabitat.nextHabitat1 : null}
