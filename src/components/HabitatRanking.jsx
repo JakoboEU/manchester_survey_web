@@ -1,5 +1,6 @@
 import React, { useState, useEffect }  from "react";
 import { supabase } from "../lib/supabaseClient";
+import HabitatImage from "./HabitatImage.jsx";
 
 function HabitatRanking({personId}) {
     const HOLDING_IMAGE = "./images/holding.png"
@@ -10,46 +11,36 @@ function HabitatRanking({personId}) {
     const [habitatImage2, setHabitatImage2] = useState(HOLDING_IMAGE);
     const [question, setQuestion] = useState('');
 
-    useEffect(() => {
-        let cancelled = false;
+    async function loadNextPair(pairSubmission) {
+        setError(null);
 
-        async function loadNextPair(pairSubmission) {
-            setError(null);
+        try {
+            const { data, error } = await supabase.functions.invoke("next-pair", {
+                body: pairSubmission,
+            });
 
-            try {
-                const { data, error } = await supabase.functions.invoke("next-pair", {
-                    body: pairSubmission,
-                });
-
-                if (error) {
-                    throw error;
-                }
-
-                const { nextQuestion, nextHabitat1, nextHabitat2 } = data ?? {};
-
-                if (!nextQuestion) {
-                    throw new Error(`Missing question for next pair ${JSON.stringify(data)}`);
-                }
-                if (isNaN(+nextHabitat1) || isNaN(+nextHabitat1)) {
-                    throw new Error(`Missing habitat for next pair ${JSON.stringify(data)}`);
-                }
-
-                if (!cancelled) {
-                    setRankHabitat({ nextQuestion, nextHabitat1, nextHabitat2 });
-                }
-            } catch (err) {
-                if (!cancelled) {
-                    setError(err?.message ?? "Unknown error");
-                    setRankHabitat(null);
-                }
+            if (error) {
+                throw error;
             }
+
+            const { nextQuestion, nextHabitat1, nextHabitat2 } = data ?? {};
+
+            if (!nextQuestion) {
+                throw new Error(`Missing question for next pair ${JSON.stringify(data)}`);
+            }
+            if (isNaN(+nextHabitat1) || isNaN(+nextHabitat1)) {
+                throw new Error(`Missing habitat for next pair ${JSON.stringify(data)}`);
+            }
+
+            setRankHabitat({ nextQuestion, nextHabitat1, nextHabitat2 });
+        } catch (err) {
+            setError(err?.message ?? "Unknown error");
+            setRankHabitat(null);
         }
+    }
 
+    useEffect(() => {
         loadNextPair( { personId });
-
-        return () => {
-            cancelled = true;
-        };
     }, [personId]);
 
     function imageUrl(clusterId) {
@@ -80,6 +71,10 @@ function HabitatRanking({personId}) {
         }
     }, [rankHabitat]);
 
+    function handleImageClick(personId, habitatWinner, habitatLoser) {
+        loadNextPair( { personId, battle: {habitatWinner: habitatWinner, habitatLoser: habitatLoser} });
+    }
+
     return (
         <div className="habitat-ranking card-body p-4">
             <h1 className="h4 mb-3 text-center">City Nature Choices</h1>
@@ -92,17 +87,20 @@ function HabitatRanking({personId}) {
                     <p className="mb-4">
                         {question}
                     </p>
-
-                    <img
-                        alt="Habitat image to compare A"
-                        className="habitat-ranking card-img"
+                    <HabitatImage
                         src={habitatImage1}
+                        habitatWinner={rankHabitat? rankHabitat.nextHabitat1 : null}
+                        habitatLoser={rankHabitat? rankHabitat.nextHabitat2 : null}
+                        personId={personId}
+                        onClick={handleImageClick}
                     />
                     <hr />
-                    <img
-                        alt="Habitat image to compare B"
-                        className="habitat-ranking card-img"
+                    <HabitatImage
                         src={habitatImage2}
+                        habitatWinner={rankHabitat? rankHabitat.nextHabitat2 : null}
+                        habitatLoser={rankHabitat? rankHabitat.nextHabitat1 : null}
+                        personId={personId}
+                        onClick={handleImageClick}
                     />
                 </>
             )}
