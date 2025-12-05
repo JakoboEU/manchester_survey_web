@@ -67,10 +67,17 @@ Deno.serve(async (req) => {
         );
     }
 
+    const questions = ['biodiversity', 'safety', 'living']
+    const randomQuestionIndex = Math.floor(Math.random() * questions.length);
+
+    const habitats = [0,1,2,3,4,5,6,7,8]
+    const randomHabitatIndex1 = Math.floor(Math.random() * habitats.length);
+    const randomHabitatIndex2 = Math.floor(Math.random() * habitats.length);
+
     const response : NextResponse = {
-        nextQuestion: 'biodiversity',
-        nextHabitat1: 1,
-        nextHabitat2: 2
+        nextQuestion: questions[randomQuestionIndex],
+        nextHabitat1: habitats[randomHabitatIndex1],
+        nextHabitat2: habitats[randomHabitatIndex2],
     }
 
     return new Response(
