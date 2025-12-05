@@ -12,6 +12,8 @@ function HabitatImage({onClick, personId, habitatWinner, habitatLoser, src}) {
                 alt={"Habitat image to compare " + habitatWinner}
                 className="habitat-ranking card-img"
                 src={src}
+                width="480px"
+                height="360px"
             />
         </a>
     )
