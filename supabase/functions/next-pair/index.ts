@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
     }
 
     const response : NextResponse = {
-        nextQuestion: '',
+        nextQuestion: 'biodiversity',
         nextHabitat1: 1,
         nextHabitat2: 2
     }

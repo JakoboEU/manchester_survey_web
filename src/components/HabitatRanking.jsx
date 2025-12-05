@@ -1,29 +1,53 @@
-import React, { useState }  from "react";
+import React, { useState, useEffect }  from "react";
 import { supabase } from "../lib/supabaseClient";
 
 function HabitatRanking({personId}) {
 
     const [error, setError] = useState(null);
+    const [rankHabitat, setRankHabitat] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    function parseNextPair(nextPair) {
-        return nextPair.then(result => {
-            const { data, error } = result;
-            if (error) {
-                setError(error)
-            }
-            const {nextQuestion, nextHabitat1, nextHabitat2} = data;
-            if (!nextQuestion || !nextHabitat1 || !nextHabitat2) {
-                setError(`Missing variables for next pair ${data}`)
-            }
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadNextPair(pairSubmission) {
+            setLoading(true);
             setError(null);
-            return {nextQuestion: nextQuestion, nextHabitat1: nextHabitat1, nextHabitat2: nextHabitat2}
-        })
-    }
 
-    const [rankHabitat, setRankHabitat] = useState(() => {
-        const nextPair = supabase.functions.invoke("next-pair", {body: {personId: personId}});
-        return parseNextPair(nextPair);
-    });
+            try {
+                const { data, error } = await supabase.functions.invoke("next-pair", {
+                    body: pairSubmission,
+                });
+
+                if (error) {
+                    throw error;
+                }
+
+                const { nextQuestion, nextHabitat1, nextHabitat2 } = data ?? {};
+
+                if (!nextQuestion || !nextHabitat1 || !nextHabitat2) {
+                    throw new Error(`Missing variables for next pair ${JSON.stringify(data)}`);
+                }
+
+                if (!cancelled) {
+                    setRankHabitat({ nextQuestion, nextHabitat1, nextHabitat2 });
+                }
+            } catch (err) {
+                if (!cancelled) {
+                    setError(err?.message ?? "Unknown error");
+                    setRankHabitat(null);
+                }
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        }
+
+        loadNextPair( { personId });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [personId]);
 
     return (
         <div className="habitat-ranking card-body p-4">
