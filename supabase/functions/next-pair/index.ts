@@ -72,7 +72,11 @@ Deno.serve(async (req) => {
 
     const habitats = [0,1,2,3,4,5,6,7,8]
     const randomHabitatIndex1 = Math.floor(Math.random() * habitats.length);
-    const randomHabitatIndex2 = Math.floor(Math.random() * habitats.length);
+    let randomHabitatIndex2 = null
+
+    do {
+        randomHabitatIndex2 = Math.floor(Math.random() * habitats.length);
+    } while (randomHabitatIndex1 === randomHabitatIndex2);
 
     const response : NextResponse = {
         nextQuestion: questions[randomQuestionIndex],
