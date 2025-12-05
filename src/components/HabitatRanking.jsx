@@ -6,6 +6,7 @@ function HabitatRanking({personId}) {
     const HOLDING_IMAGE = "./images/holding.png"
     const [error, setError] = useState(null);
     const [rankHabitat, setRankHabitat] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const [habitatImage1, setHabitatImage1] = useState(HOLDING_IMAGE);
     const [habitatImage2, setHabitatImage2] = useState(HOLDING_IMAGE);
@@ -68,11 +69,18 @@ function HabitatRanking({personId}) {
                     setQuestion('')
                     setError(`Invalid question key ${rankHabitat.nextQuestion}`)
             }
+            setLoading(false)
         }
     }, [rankHabitat]);
 
     function handleImageClick(personId, habitatWinner, habitatLoser) {
-        loadNextPair( { personId, battle: {habitatWinner: habitatWinner, habitatLoser: habitatLoser} });
+        if (!loading) {
+            setLoading(true)
+            setHabitatImage1(HOLDING_IMAGE)
+            setHabitatImage2(HOLDING_IMAGE)
+            setQuestion('')
+            loadNextPair({personId, battle: {habitatWinner: habitatWinner, habitatLoser: habitatLoser}});
+        }
     }
 
     return (
