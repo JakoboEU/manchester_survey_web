@@ -10,10 +10,10 @@ function HabitatImage({onClick, personId, habitatWinner, habitatLoser, src}) {
         <a onClick={handleClick}>
             <img
                 alt={"Habitat image to compare " + habitatWinner}
-                className="habitat-ranking card-img"
+                className="habitat-ranking card-img img-fluid"
                 src={src}
-                width="480px"
-                height="360px"
+                width={480}
+                height={360}
             />
         </a>
     )
