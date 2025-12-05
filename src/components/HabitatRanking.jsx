@@ -57,13 +57,13 @@ function HabitatRanking({personId}) {
 
             switch (rankHabitat.nextQuestion) {
                 case 'biodiversity':
-                    setQuestion('Click on the image showing habitat that seems like it would support more kinds of wildlife (birds, pollinators, plants):')
+                    setQuestion('Click the image that looks like it would support more wildlife (birds, pollinators, plants):')
                     break;
                 case 'safety':
-                    setQuestion('Click on the image containing space would you feel safer spending time in—including at dusk:')
+                    setQuestion('Click the image where you’d feel comfortable walking — even at dusk:')
                     break;
                 case 'living':
-                    setQuestion('Click on the image which would make you more likely to buy a home in the area:')
+                    setQuestion('Click the image that would make you more likely to buy a home nearby:')
                     break;
                 default:
                     setQuestion('')
