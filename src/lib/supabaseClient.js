@@ -8,3 +8,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+export const signInAnonymously = function(captchaToken) {
+    const { data, error } = supabase.auth.signInAnonymously({
+        options: { captchaToken }
+    })
+}

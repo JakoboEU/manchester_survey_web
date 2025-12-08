@@ -3,6 +3,7 @@ import PolicyForm from "./components/PolicyForm.jsx";
 import DemographicsForm from "./components/DemographicsForm.jsx";
 import HabitatRanking from "./components/HabitatRanking.jsx";
 import ContinueForm from "./components/ContinueForm.jsx";
+import {signInAnonymously} from "./lib/supabaseClient.js";
 
 const enumValue = (name) => Object.freeze({toString: () => name});
 
@@ -78,6 +79,7 @@ function App() {
         if (!demographics) {
             return
         }
+        signInAnonymously(captchaToken)
         console.log("Demographics submitted:", demographics)
         setPersonId('4454')
         setPageState(PageState.DEMOGRAPHICS_COMPLETE);
@@ -87,7 +89,8 @@ function App() {
         setPageState(PageState.SURVEY);
     }
 
-    function handleContinueToSurveyWithCaptcha() {
+    function handleContinueToSurveyWithCaptcha(captchaToken) {
+        signInAnonymously(captchaToken)
         setPageState(PageState.SURVEY);
     }
 
