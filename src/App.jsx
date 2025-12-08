@@ -3,7 +3,7 @@ import PolicyForm from "./components/PolicyForm.jsx";
 import DemographicsForm from "./components/DemographicsForm.jsx";
 import HabitatRanking from "./components/HabitatRanking.jsx";
 import ContinueForm from "./components/ContinueForm.jsx";
-import {signInAnonymously, supabase} from "./lib/supabaseClient.js";
+import {signInAnonymously, supabase, useSupabaseError} from "./lib/supabaseClient.js";
 
 const enumValue = (name) => Object.freeze({toString: () => name});
 
@@ -79,6 +79,8 @@ function App() {
         }));
     }
 
+    const { wrapResult } = useSupabaseError()
+
     async function handleDemographicsSubmit(captchaToken) {
         if (!demographics) {
             return
@@ -96,8 +98,13 @@ function App() {
                 body: demographics,
             });
 
-            if (error) {
-                throw error;
+            const { ok: demographicDataStoredOkay, message: demographicDataStoredError } = wrapResult(
+                { data, error },
+                'Failed to store demographic data.'
+            )
+
+            if (!demographicDataStoredOkay) {
+                throw new Error(demographicDataStoredError)
             }
 
             const {personId} = data ?? {};

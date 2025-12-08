@@ -1,5 +1,5 @@
 import React, { useState, useEffect }  from "react";
-import { supabase } from "../lib/supabaseClient";
+import {supabase, useSupabaseError} from "../lib/supabaseClient";
 import HabitatImage from "./HabitatImage.jsx";
 import "./HabitatRanking.css"
 
@@ -12,17 +12,27 @@ function HabitatRanking({personId, accessToken}) {
     const [habitatImage1, setHabitatImage1] = useState(HOLDING_IMAGE);
     const [habitatImage2, setHabitatImage2] = useState(HOLDING_IMAGE);
     const [question, setQuestion] = useState('');
+    const { wrapResult } = useSupabaseError()
 
     async function loadNextPair(pairSubmission) {
         setError(null);
 
         try {
-            const { data, error } = await supabase.functions.invoke("next-pair", {
+            const { data, error, response } = await supabase.functions.invoke("next-pair", {
                 body: pairSubmission,
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
+
+            const { ok: pairSubmissionOkay, message: pairSubmissionError } = wrapResult(
+                { data, error, response },
+                'Failed to store demographic data.'
+            )
+
+            if (!pairSubmissionOkay) {
+                throw new Error(pairSubmissionError)
+            }
 
             if (error) {
                 throw error;

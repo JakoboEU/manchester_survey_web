@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
+import {createClient} from "jsr:@supabase/supabase-js";
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -43,7 +44,7 @@ Deno.serve(async (req) => {
         });
     }
 
-    let json: unknown;
+    let json: Body;
 
     try {
         json = await req.json();
@@ -62,6 +63,37 @@ Deno.serve(async (req) => {
             JSON.stringify({ error: "personId is required" }),
             {
                 status: 400,
+                headers: { "Content-Type": "application/json" },
+            }
+        );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+        global: {
+            headers: {
+                Authorization: req.headers.get('Authorization')!,
+            },
+        },
+    })
+
+    const { data: personExists, error: fetchPersonError } = await supabase
+        .from('person')
+        .select('person_id')
+        .eq('person_id', json.personId)
+        .maybeSingle()
+
+    if (fetchPersonError) {
+        throw fetchPersonError
+    }
+
+    if (!personExists) {
+        return new Response(
+            JSON.stringify({ error: `Person ${json.personId} does not exist` }),
+            {
+                status: 401,
                 headers: { "Content-Type": "application/json" },
             }
         );
