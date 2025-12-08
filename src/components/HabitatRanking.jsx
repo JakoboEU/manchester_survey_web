@@ -3,7 +3,7 @@ import { supabase } from "../lib/supabaseClient";
 import HabitatImage from "./HabitatImage.jsx";
 import "./HabitatRanking.css"
 
-function HabitatRanking({personId}) {
+function HabitatRanking({personId, accessToken}) {
     const HOLDING_IMAGE = "./images/holding.png"
     const [error, setError] = useState(null);
     const [rankHabitat, setRankHabitat] = useState(null);
@@ -19,6 +19,9 @@ function HabitatRanking({personId}) {
         try {
             const { data, error } = await supabase.functions.invoke("next-pair", {
                 body: pairSubmission,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
             });
 
             if (error) {

@@ -191,7 +191,7 @@ web3 = 30
 [auth.captcha]
 enabled = true
 provider = "hcaptcha"
-secret = "2104d23c-c08a-4062-8304-bd10c38026e0"
+secret = "env(HCAPTCHA_SECRET)"
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.
@@ -391,3 +391,14 @@ entrypoint = "./functions/next-pair/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/next-pair/*.html" ]
+
+[functions.create-demographic]
+enabled = true
+verify_jwt = true
+import_map = "./functions/create-demographic/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/create-demographic/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/create-demographic/*.html" ]

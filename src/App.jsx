@@ -3,7 +3,7 @@ import PolicyForm from "./components/PolicyForm.jsx";
 import DemographicsForm from "./components/DemographicsForm.jsx";
 import HabitatRanking from "./components/HabitatRanking.jsx";
 import ContinueForm from "./components/ContinueForm.jsx";
-import {signInAnonymously} from "./lib/supabaseClient.js";
+import {signInAnonymously, supabase} from "./lib/supabaseClient.js";
 
 const enumValue = (name) => Object.freeze({toString: () => name});
 
@@ -12,7 +12,8 @@ const PageState = Object.freeze({
     DEMOGRAPHICS: enumValue("Demographics"),
     DEMOGRAPHICS_COMPLETE: enumValue("DemographicsComplete"),
     RETURNED_USER: enumValue("ReturnedUser"),
-    SURVEY: enumValue("Survey")
+    SURVEY: enumValue("Survey"),
+    ERROR: enumValue("Survey")
 });
 
 function App() {
@@ -45,6 +46,9 @@ function App() {
         garden: "",
     });
 
+    const [error, setError] = useState(null);
+    const [accessToken, setAccessToken] = useState(null);
+
     const isDemographicsComplete = Object.keys(demographics).every((field) => !!demographics[field]);
 
     function handlePolicyAccepted() {
@@ -75,22 +79,48 @@ function App() {
         }));
     }
 
-    function handleDemographicsSubmit(captchaToken) {
+    async function handleDemographicsSubmit(captchaToken) {
         if (!demographics) {
             return
         }
-        signInAnonymously(captchaToken)
-        console.log("Demographics submitted:", demographics)
-        setPersonId('4454')
-        setPageState(PageState.DEMOGRAPHICS_COMPLETE);
+
+        setError(null);
+        try {
+            const accessTokenFromSignIn = await signInAnonymously(captchaToken)
+            setAccessToken(accessTokenFromSignIn)
+
+            const {data, error} = await supabase.functions.invoke("create-demographic", {
+                headers: {
+                    Authorization: `Bearer ${accessTokenFromSignIn}`,
+                },
+                body: demographics,
+            });
+
+            if (error) {
+                throw error;
+            }
+
+            const {personId} = data ?? {};
+
+            if (!personId) {
+                throw new Error("No person ID returned from upstream.");
+            } else {
+                setPersonId(personId)
+                setPageState(PageState.DEMOGRAPHICS_COMPLETE);
+            }
+        } catch (err) {
+            setPageState(PageState.ERROR)
+            setError(err?.message ?? "Unknown error");
+        }
     }
 
     function handleContinueToSurvey() {
         setPageState(PageState.SURVEY);
     }
 
-    function handleContinueToSurveyWithCaptcha(captchaToken) {
-        signInAnonymously(captchaToken)
+    async function handleContinueToSurveyWithCaptcha(captchaToken) {
+        const accessTokenFromSignIn = await signInAnonymously(captchaToken)
+        setAccessToken(accessTokenFromSignIn)
         setPageState(PageState.SURVEY);
     }
 
@@ -125,13 +155,20 @@ function App() {
                 title="Welcome Back"
                 text="Click continue to the main part of the survey." />
         );
-    } else if (pageState === PageState.SURVEY) {
-        content = <HabitatRanking personId={personId} />
-    } else {
+    } else if (pageState === PageState.ERROR) {
         content = <div className="card-body p-4">
                 <h1 className="h4 mb-3 text-center">City Nature Choices: Page Error</h1>
-                <p className="text-center mb-4">Invalid page state, please refresh the page in the browser.</p>
+                <div className="alert alert-danger">
+                    {error}
+                </div>
             </div>
+    } else if (pageState === PageState.SURVEY) {
+        content = <HabitatRanking personId={personId} accessToken={accessToken} />
+    } else {
+        content = <div className="card-body p-4">
+                    <h1 className="h4 mb-3 text-center">City Nature Choices: Page Error</h1>
+                    <p className="text-center mb-4">Invalid page state, please refresh the page in the browser.</p>
+                </div>
     }
 
     return (

@@ -7,8 +7,9 @@ function ContinueForm({captchaRequired, onContinue, title, text}) {
 
     const captchaSiteKey = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 
-    function continueSubmit() {
-        if (captchaRequired || captchaToken) {
+    function continueSubmit(event) {
+        event.preventDefault()
+        if (captchaRequired) {
             onContinue(captchaToken)
         } else {
             onContinue()
@@ -22,10 +23,10 @@ function ContinueForm({captchaRequired, onContinue, title, text}) {
                 <p className="text-muted">
                     {text}
                 </p>
-                <span className="text-muted text-center mb-4">
-                    <HCaptcha sitekey={captchaSiteKey} onVerify={(token) => { setCaptchaToken(token) }}/>
-                </span>
                 <form onSubmit={continueSubmit} noValidate>
+                    <span className="text-muted text-center mb-4">
+                        <HCaptcha sitekey={captchaSiteKey} onVerify={(token) => { setCaptchaToken(token) }}/>
+                    </span>
                     <button type="submit" className="btn btn-primary w-100" disabled={!captchaToken}>
                         Continue
                     </button>

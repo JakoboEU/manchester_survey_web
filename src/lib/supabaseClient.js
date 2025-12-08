@@ -9,8 +9,20 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export const signInAnonymously = function(captchaToken) {
-    const { data, error } = supabase.auth.signInAnonymously({
+export const signInAnonymously = async function(captchaToken) {
+    const { data, error } =  await supabase.auth.signInAnonymously({
         options: { captchaToken }
     })
+
+    if (error) {
+        throw error;
+    }
+
+    const accessToken = data.session.access_token;
+
+    if (!accessToken) {
+        throw Error("Response missing accessToken");
+    }
+
+    return accessToken;
 }
