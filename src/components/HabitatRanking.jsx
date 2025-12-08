@@ -12,6 +12,7 @@ function HabitatRanking({personId, accessToken}) {
     const [habitatImage1, setHabitatImage1] = useState(HOLDING_IMAGE);
     const [habitatImage2, setHabitatImage2] = useState(HOLDING_IMAGE);
     const [question, setQuestion] = useState('');
+    const [questionId, setQuestionId] = useState('');
     const { wrapResult } = useSupabaseError()
 
     async function loadNextPair(pairSubmission) {
@@ -68,6 +69,7 @@ function HabitatRanking({personId, accessToken}) {
         if (rankHabitat) {
             setHabitatImage1(imageUrl(rankHabitat.nextHabitat1))
             setHabitatImage2(imageUrl(rankHabitat.nextHabitat2))
+            setQuestionId(rankHabitat.nextQuestion)
 
             switch (rankHabitat.nextQuestion) {
                 case 'biodiversity':
@@ -93,7 +95,7 @@ function HabitatRanking({personId, accessToken}) {
             setHabitatImage1(HOLDING_IMAGE)
             setHabitatImage2(HOLDING_IMAGE)
             setQuestion('')
-            loadNextPair({personId, battle: {habitatWinner: habitatWinner, habitatLoser: habitatLoser}});
+            loadNextPair({personId, battle: {habitatWinner: habitatWinner, habitatLoser: habitatLoser, question: questionId}});
         }
     }
 

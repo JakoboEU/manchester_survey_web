@@ -19,6 +19,13 @@ create policy "Demographics can be selected by everyone."
    to authenticated
    using ( true );
 
+alter table questions enable row level security;
+
+create policy "Questions can be selected by everyone."
+    on questions for select
+    to authenticated
+    using ( true );
+
 alter table person_demographics enable row level security;
 
 create policy "Demographics can be selected by everyone."

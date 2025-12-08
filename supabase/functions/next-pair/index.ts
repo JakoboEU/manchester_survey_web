@@ -9,6 +9,7 @@ const corsHeaders = {
 };
 
 type HabitatRank = {
+    question: string
     habitatWinner: number;
     habitatLoser: number;
 }
