@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import RadioGroup from "./RadioGroup.jsx";
+import HCaptcha from '@hcaptcha/react-hcaptcha'
+
 
 function DemographicsForm({ formData, onChange, enableSubmit, onSubmit, onSkipDemographics, notSelectedValue }) {
     const [skipDemographics, setSkipDemographics] = React.useState(false);
+    const [captchaToken, setCaptchaToken] = useState()
+
+    const captchaSiteKey = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 
     function handleChange(event) {
         const { name, value } = event.target;
@@ -12,7 +17,7 @@ function DemographicsForm({ formData, onChange, enableSubmit, onSubmit, onSkipDe
     function handleSubmit(event) {
         event.preventDefault();
         if (enableSubmit) {
-            onSubmit();
+            onSubmit(captchaToken);
         }
     }
 
@@ -164,7 +169,10 @@ function DemographicsForm({ formData, onChange, enableSubmit, onSubmit, onSkipDe
             </div>
             <form onSubmit={handleSubmit} className="needs-validation" noValidate>
                 {demographicsForm}
-                <button type="submit" className="btn btn-primary w-100" disabled={!enableSubmit}>
+                <span className="text-muted text-center mb-4">
+                    <HCaptcha sitekey={captchaSiteKey} onVerify={(token) => { setCaptchaToken(token) }}/>
+                </span>
+                <button type="submit" className="btn btn-primary w-100" disabled={!enableSubmit || captchaToken == null}>
                     Continue
                 </button>
             </form>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import PolicyForm from "./components/PolicyForm.jsx";
 import DemographicsForm from "./components/DemographicsForm.jsx";
 import HabitatRanking from "./components/HabitatRanking.jsx";
+import ContinueForm from "./components/ContinueForm.jsx";
 
 const enumValue = (name) => Object.freeze({toString: () => name});
 
@@ -73,7 +74,7 @@ function App() {
         }));
     }
 
-    function handleDemographicsSubmit() {
+    function handleDemographicsSubmit(captchaToken) {
         if (!demographics) {
             return
         }
@@ -83,6 +84,10 @@ function App() {
     }
 
     function handleContinueToSurvey() {
+        setPageState(PageState.SURVEY);
+    }
+
+    function handleContinueToSurveyWithCaptcha() {
         setPageState(PageState.SURVEY);
     }
 
@@ -103,32 +108,19 @@ function App() {
         );
     } else if (pageState === PageState.DEMOGRAPHICS_COMPLETE) {
         content = (
-            <div className="card-body p-4 text-center">
-                <h1 className="h4 mb-3">Thank you</h1>
-                <p className="text-muted">
-                    Your demographic answers have been recorded. You can now continue to
-                    the main part of the survey.
-                </p>
-                <form onSubmit={handleContinueToSurvey} noValidate>
-                    <button type="submit" className="btn btn-primary w-100">
-                        Continue
-                    </button>
-                </form>
-            </div>
+            <ContinueForm
+                onContinue={handleContinueToSurvey}
+                captchaRequired={false}
+                title="Thank you"
+                text="Your demographic answers have been recorded. You can now continue to the main part of the survey." />
         );
     } else if (pageState === PageState.RETURNED_USER) {
         content = (
-            <div className="card-body p-4 text-center">
-                <h1 className="h4 mb-3">Welcome Back</h1>
-                <p className="text-muted">
-                    Click continue to the main part of the survey.
-                </p>
-                <form onSubmit={handleContinueToSurvey} noValidate>
-                    <button type="submit" className="btn btn-primary w-100">
-                        Continue
-                    </button>
-                </form>
-            </div>
+            <ContinueForm
+                onContinue={handleContinueToSurveyWithCaptcha}
+                captchaRequired={true}
+                title="Welcome Back"
+                text="Click continue to the main part of the survey." />
         );
     } else if (pageState === PageState.SURVEY) {
         content = <HabitatRanking personId={personId} />
