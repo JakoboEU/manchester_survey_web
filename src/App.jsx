@@ -18,7 +18,7 @@ const PageState = Object.freeze({
 
 function App() {
     const notSelectedValue = 'not-selected';
-    const localStoragePersonId = 'personId';
+    const localStoragePersonId = 'person_id';
 
     const [personId, setPersonId] = useState(() => {
         return JSON.parse(localStorage.getItem(localStoragePersonId)) || null;
