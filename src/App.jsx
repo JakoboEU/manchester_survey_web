@@ -4,6 +4,7 @@ import DemographicsForm from "./components/DemographicsForm.jsx";
 import HabitatRanking from "./components/HabitatRanking.jsx";
 import ContinueForm from "./components/ContinueForm.jsx";
 import {signInAnonymously, supabase, useSupabaseError} from "./lib/supabaseClient.js";
+import PageShimmer from "./components/PageShimmer.jsx";
 
 const enumValue = (name) => Object.freeze({toString: () => name});
 
@@ -19,6 +20,8 @@ const PageState = Object.freeze({
 function App() {
     const notSelectedValue = 'not-selected';
     const localStoragePersonId = 'person_id';
+
+    const [loading, setLoading] = useState(false);
 
     const [personId, setPersonId] = useState(() => {
         return JSON.parse(localStorage.getItem(localStoragePersonId)) || null;
@@ -87,6 +90,7 @@ function App() {
         }
 
         setError(null);
+        setLoading(true);
         try {
             const accessTokenFromSignIn = await signInAnonymously(captchaToken)
             setAccessToken(accessTokenFromSignIn)
@@ -114,10 +118,12 @@ function App() {
             } else {
                 setPersonId(personId)
                 setPageState(PageState.DEMOGRAPHICS_COMPLETE);
+                setLoading(false);
             }
         } catch (err) {
             setPageState(PageState.ERROR)
             setError(err?.message ?? "Unknown error");
+            setLoading(false);
         }
     }
 
@@ -182,6 +188,7 @@ function App() {
         <div className="min-vh-100 d-flex align-items-center justify-content-center">
             <div className="card shadow-lg w-100" style={{ maxWidth: "480px" }}>
                 {content}
+                {loading && <PageShimmer />}
             </div>
         </div>
     );

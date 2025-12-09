@@ -1,0 +1,32 @@
+/* Full-screen overlay */
+.page-shimmer-overlay {
+    position: fixed;
+    inset: 0;                 /* top: 0; right: 0; bottom: 0; left: 0 */
+    z-index: 9999;
+    pointer-events: all;      /* block clicks underneath while loading */
+    cursor: progress;
+    background-color: #f0f2f5; /* light grey "skeleton" background */
+}
+
+/* Shimmer gradient moving across the whole page */
+.page-shimmer-layer {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+            90deg,
+            #f0f2f5 0px,
+            #e0e0e0 40px,
+            #f0f2f5 80px
+    );
+    background-size: 200% 100%;
+    animation: page-shimmer 1.3s infinite;
+}
+
+@keyframes page-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
