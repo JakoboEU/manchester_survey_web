@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
     plugins: [react()],
-    base: "/manchester_survey_web/",
+    base: "/",
     build: {
         outDir: "docs",
     },
