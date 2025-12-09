@@ -1,13 +1,29 @@
+/* global Deno */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import {createClient} from "jsr:@supabase/supabase-js";
 
-const commonHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers":
-        "authorization, x-client-info, apikey, content-type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Content-Type": "application/json",
-};
+const allowedOrigins = [
+    "https://citynaturechoices.org",
+    "https://www.citynaturechoices.org",
+    "http://localhost:5173",
+];
+
+export function makeCommonHeaders(request) {
+    const origin = request.headers.get("Origin");
+    const safeOrigin =
+        origin && allowedOrigins.includes(origin)
+            ? origin
+            : "https://citynaturechoices.org"; // sensible default / fallback
+
+    return {
+        "Access-Control-Allow-Origin": safeOrigin,
+        "Access-Control-Allow-Headers":
+            "authorization, x-client-info, apikey, content-type",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Vary": "Origin",
+        "Content-Type": "application/json",
+    };
+}
 
 type HabitatRank = {
     question: string
@@ -43,6 +59,7 @@ const K = 24
 curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/next-pair' --header 'Content-Type: application/json' --data '{"personId":"123"}'
  */
 Deno.serve(async (req) => {
+    const commonHeaders = makeCommonHeaders(req);
     if (req.method === "OPTIONS") {
         return new Response("ok", {headers: commonHeaders});
     }

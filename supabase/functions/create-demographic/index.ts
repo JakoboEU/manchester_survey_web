@@ -1,12 +1,29 @@
+/* global Deno */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import {createClient} from "jsr:@supabase/supabase-js";
 
-const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers":
-        "authorization, x-client-info, apikey, content-type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+const allowedOrigins = [
+    "https://citynaturechoices.org",
+    "https://www.citynaturechoices.org",
+    "http://localhost:5173",
+];
+
+export function makeCommonHeaders(request) {
+    const origin = request.headers.get("Origin");
+    const safeOrigin =
+        origin && allowedOrigins.includes(origin)
+            ? origin
+            : "https://citynaturechoices.org"; // sensible default / fallback
+
+    return {
+        "Access-Control-Allow-Origin": safeOrigin,
+        "Access-Control-Allow-Headers":
+            "authorization, x-client-info, apikey, content-type",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Vary": "Origin",
+        "Content-Type": "application/json",
+    };
+}
 
 type Demographics = {
     gender: string,
@@ -31,13 +48,14 @@ function serverError(message) {
 }
 
 Deno.serve(async (req) => {
+    const commonHeaders = makeCommonHeaders(req)
     if (req.method === "OPTIONS") {
-        return new Response("ok", { headers: corsHeaders });
+        return new Response("ok", { headers: commonHeaders });
     }
     if (req.method !== "POST") {
         return new Response("Method not allowed", {
             status: 405,
-            headers: corsHeaders,
+            headers: commonHeaders,
         });
     }
 
@@ -61,7 +79,7 @@ Deno.serve(async (req) => {
             JSON.stringify({ error: "Invalid JSON body" }),
             {
                 status: 400,
-                headers: { "Content-Type": "application/json" },
+                headers: commonHeaders,
             }
         );
     }
@@ -97,10 +115,7 @@ Deno.serve(async (req) => {
         } else {
             return new Response(
                 JSON.stringify({personId: personId}),
-                { headers: {
-                        ...corsHeaders,
-                        "Content-Type": "application/json"
-                    }},
+                { headers: commonHeaders},
             )
         }
     }
