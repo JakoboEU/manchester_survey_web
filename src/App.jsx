@@ -5,6 +5,7 @@ import HabitatRanking from "./components/HabitatRanking.jsx";
 import ContinueForm from "./components/ContinueForm.jsx";
 import {signInAnonymously, supabase, useSupabaseError} from "./lib/supabaseClient.js";
 import PageShimmer from "./components/PageShimmer.jsx";
+import {fetchPersonId, storePersonId} from "./lib/personLocalRepository.js";
 
 const enumValue = (name) => Object.freeze({toString: () => name});
 
@@ -19,12 +20,11 @@ const PageState = Object.freeze({
 
 function App() {
     const notSelectedValue = 'not-selected';
-    const localStoragePersonId = 'person_id';
 
     const [loading, setLoading] = useState(false);
 
     const [personId, setPersonId] = useState(() => {
-        return JSON.parse(localStorage.getItem(localStoragePersonId)) || null;
+        return fetchPersonId();
     });
     const [pageState, setPageState] = useState(() => {
         if (personId === null) {
@@ -34,7 +34,7 @@ function App() {
         }
     });
     useEffect(() => {
-        localStorage.setItem(localStoragePersonId, JSON.stringify(personId));
+        storePersonId(personId);
     }, [personId]);
 
     const [demographics, setDemographics] = useState({

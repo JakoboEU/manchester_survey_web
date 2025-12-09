@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import {deletePersonId} from "./personLocalRepository.js";
 
 const supabaseUrl = import.meta.env.VITE_REMOTE_URL;
 const supabaseAnonKey = import.meta.env.VITE_REMOTE_KEY;
@@ -50,8 +51,9 @@ function mapSupabaseError(error, response, fallbackMessage) {
     }
 
     if (status === 401) {
+        deletePersonId()
         return {
-            message: 'The user you provided is not valid. Please clear page data and refresh page.',
+            message: 'The user you provided is not valid. Please refresh page.',
             status,
             ok: false
         }
