@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import { useState } from "react";
 
 const supabaseUrl = import.meta.env.VITE_REMOTE_URL;
 const supabaseAnonKey = import.meta.env.VITE_REMOTE_KEY;

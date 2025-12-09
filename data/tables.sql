@@ -25,7 +25,7 @@ create table habitat (
      demographic character varying (10) not null,
      demographic_value character varying (10) not null,
      habitat_id int not null,
-     question_id character varying (10) not null,
+     question_id character varying (12) not null,
      mu numeric not null default 1500.0,
      rankings bigint default 0,
      constraint habitat_to_demographics_fk foreign key (demographic, demographic_value) references demographics,

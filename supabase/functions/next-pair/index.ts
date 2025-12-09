@@ -1,11 +1,12 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import {createClient} from "jsr:@supabase/supabase-js";
 
-const corsHeaders = {
+const commonHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers":
         "authorization, x-client-info, apikey, content-type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Content-Type": "application/json",
 };
 
 type HabitatRank = {
@@ -25,23 +26,30 @@ type NextResponse = {
     nextHabitat2: number;
 }
 
+type DatabaseResponse = {
+    question_id: string;
+    habitat1_id: number;
+    habitat2_id: number;
+}
+
 function isBody(value: unknown): value is Body {
     if (typeof value !== "object" || value === null) return false;
     const v = value as { personId?: unknown };
     return typeof v.personId === "string" && v.personId.trim().length > 0;
 }
 
+const K = 24
 /*
 curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/next-pair' --header 'Content-Type: application/json' --data '{"personId":"123"}'
  */
 Deno.serve(async (req) => {
     if (req.method === "OPTIONS") {
-        return new Response("ok", { headers: corsHeaders });
+        return new Response("ok", {headers: commonHeaders});
     }
     if (req.method !== "POST") {
         return new Response("Method not allowed", {
             status: 405,
-            headers: corsHeaders,
+            headers: commonHeaders,
         });
     }
 
@@ -51,20 +59,20 @@ Deno.serve(async (req) => {
         json = await req.json();
     } catch {
         return new Response(
-            JSON.stringify({ error: "Invalid JSON body" }),
+            JSON.stringify({error: "Invalid JSON body"}),
             {
                 status: 400,
-                headers: { "Content-Type": "application/json" },
+                headers: commonHeaders,
             }
         );
     }
 
     if (!isBody(json)) {
         return new Response(
-            JSON.stringify({ error: "personId is required" }),
+            JSON.stringify({error: "personId is required"}),
             {
                 status: 400,
-                headers: { "Content-Type": "application/json" },
+                headers: commonHeaders,
             }
         );
     }
@@ -80,7 +88,7 @@ Deno.serve(async (req) => {
         },
     })
 
-    const { data: personExists, error: fetchPersonError } = await supabase
+    const {data: personExists, error: fetchPersonError} = await supabase
         .from('person')
         .select('person_id')
         .eq('person_id', json.personId)
@@ -92,37 +100,53 @@ Deno.serve(async (req) => {
 
     if (!personExists) {
         return new Response(
-            JSON.stringify({ error: `Person ${json.personId} does not exist` }),
+            JSON.stringify({error: `Person ${json.personId} does not exist`}),
             {
                 status: 401,
-                headers: { "Content-Type": "application/json" },
+                headers: commonHeaders,
             }
         );
     }
 
-    const questions = ['biodiversity', 'safety', 'living']
-    const randomQuestionIndex = Math.floor(Math.random() * questions.length);
-
-    const habitats = [0,1,2,3,4,5,6,7,8]
-    const randomHabitatIndex1 = Math.floor(Math.random() * habitats.length);
-    let randomHabitatIndex2 = null
-
-    do {
-        randomHabitatIndex2 = Math.floor(Math.random() * habitats.length);
-    } while (randomHabitatIndex1 === randomHabitatIndex2);
-
-    const response : NextResponse = {
-        nextQuestion: questions[randomQuestionIndex],
-        nextHabitat1: habitats[randomHabitatIndex1],
-        nextHabitat2: habitats[randomHabitatIndex2],
+    if (json.battle) {
+        const {error} = await supabase.rpc("apply_habitat_elo_rpc", {
+            p_person_id: json.personId,
+            p_question_id: json.battle.question,
+            p_winner_id: json.battle.habitatWinner,
+            p_loser_id: json.battle.habitatLoser,
+            p_k: K,
+        });
+        if (error) return new Response(JSON.stringify({ok: false, error: error.message}), {
+            status: 500,
+            headers: commonHeaders,
+        });
     }
 
+    const {data, error} = await supabase.rpc("next_pair_for_person", {
+        p_person_id: json.personId,
+    });
+
+    if (error) return new Response(JSON.stringify({ok: false, error: error.message}), {
+        status: 500,
+        headers: commonHeaders
+    });
+
+    const response: NextResponse = Math.random() < 0.5
+        ? {
+            nextQuestion: data[0].question_id,
+            nextHabitat1: data[0].habitat1_id,
+            nextHabitat2: data[0].habitat2_id,
+        }
+        : {
+            nextQuestion: data[0].question_id,
+            nextHabitat1: data[0].habitat2_id,
+            nextHabitat2: data[0].habitat1_id,
+        };
+    console.log(data);
+    console.log(response);
+
     return new Response(
-        JSON.stringify(response),
-        { headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json"
-        }},
+        JSON.stringify(response), { headers: commonHeaders},
     )
 })
 

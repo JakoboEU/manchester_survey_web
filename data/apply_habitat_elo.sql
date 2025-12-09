@@ -64,3 +64,17 @@ $$;
 
 -- Usage:
 -- call apply_habitat_elo('e5251087-1f60-41a6-83c9-1c84d637ce5f', 'biodiversity', 2, 1, 24.0);
+
+
+create or replace function apply_habitat_elo_rpc(
+  p_person_id   uuid,
+  p_question_id text,
+  p_winner_id   int,
+  p_loser_id    int,
+  p_k           numeric default 24.0
+) returns void
+language sql
+security definer
+as $$
+  call apply_habitat_elo(p_person_id, p_question_id, p_winner_id, p_loser_id, p_k);
+$$;
