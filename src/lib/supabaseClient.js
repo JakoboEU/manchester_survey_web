@@ -31,8 +31,15 @@ export const signInAnonymously = async function(captchaToken) {
 function mapSupabaseError(error, response, fallbackMessage) {
     if (!error) return {message: '', status: 200, ok: true}
 
-    const status = response.status
-    const rawMessage = error.message || response.statusText
+    const status =
+        response?.status ??
+        error?.context?.status ??
+        0;
+
+    const rawMessage =
+        error?.message ??
+        response?.statusText ??
+        "Unknown error talking to the server";
 
     if (rawMessage.includes('row-level security')) {
         return {
