@@ -21,9 +21,6 @@ function HabitatRanking({personId, accessToken}) {
         try {
             const { data, error, response } = await supabase.functions.invoke("next-pair", {
                 body: pairSubmission,
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
             });
 
             const { ok: pairSubmissionOkay, message: pairSubmissionError } = wrapResult(

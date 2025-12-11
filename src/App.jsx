@@ -96,9 +96,6 @@ function App() {
             setAccessToken(accessTokenFromSignIn)
 
             const {data, error} = await supabase.functions.invoke("create-demographic", {
-                headers: {
-                    Authorization: `Bearer ${accessTokenFromSignIn}`,
-                },
                 body: demographics,
             });
 
