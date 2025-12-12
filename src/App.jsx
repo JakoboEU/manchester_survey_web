@@ -155,7 +155,7 @@ function App() {
                 onContinue={handleContinueToSurvey}
                 captchaRequired={false}
                 title="Thank you"
-                text="Your demographic answers have been recorded. You can now continue to the main part of the survey." />
+                text="Your demographic responses have been recorded. Click continue to the main part of the survey. Rank as many image pairs as you like." />
         );
     } else if (pageState === PageState.RETURNED_USER) {
         content = (
