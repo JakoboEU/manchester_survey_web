@@ -3,6 +3,8 @@
 # Stop commit if the build fails
 npm run build || exit 1
 
+echo "citynaturechoices.org" > docs/CNAME
+
 # If build succeeds, include docs/ in the commit
 git add docs
 
