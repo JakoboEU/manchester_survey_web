@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import RadioGroup from "./RadioGroup.jsx";
-import HCaptcha from '@hcaptcha/react-hcaptcha'
-
+import Turnstile from "react-turnstile";
 
 function DemographicsForm({ formData, onChange, enableSubmit, onSubmit, onSkipDemographics, notSelectedValue }) {
     const [skipDemographics, setSkipDemographics] = React.useState(false);
@@ -170,7 +169,7 @@ function DemographicsForm({ formData, onChange, enableSubmit, onSubmit, onSkipDe
             <form onSubmit={handleSubmit} className="needs-validation" noValidate>
                 {demographicsForm}
                 <span className="text-muted text-center mb-4">
-                    <HCaptcha sitekey={captchaSiteKey} onVerify={(token) => { setCaptchaToken(token) }}/>
+                    <Turnstile sitekey="0x4AAAAAACKMJXal2NhKyPKL" onVerify={(token) => { setCaptchaToken(token) }}/>
                 </span>
                 <button type="submit" className="btn btn-primary w-100" disabled={!enableSubmit || captchaToken == null}>
                     Continue

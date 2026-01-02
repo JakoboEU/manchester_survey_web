@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import HCaptcha from '@hcaptcha/react-hcaptcha'
-
+import Turnstile from "react-turnstile";
 
 function ContinueForm({captchaRequired, onContinue, title, text}) {
     const [captchaToken, setCaptchaToken] = useState()
@@ -25,7 +24,7 @@ function ContinueForm({captchaRequired, onContinue, title, text}) {
                 </p>
                 <form onSubmit={continueSubmit} noValidate>
                     <span className="text-muted text-center mb-4">
-                        <HCaptcha sitekey={captchaSiteKey} onVerify={(token) => { setCaptchaToken(token) }}/>
+                        <Turnstile sitekey="0x4AAAAAACKMJXal2NhKyPKL" onVerify={(token) => { setCaptchaToken(token) }}/>
                     </span>
                     <button type="submit" className="btn btn-primary w-100" disabled={!captchaToken}>
                         Continue
