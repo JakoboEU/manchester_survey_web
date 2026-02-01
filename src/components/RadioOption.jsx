@@ -1,4 +1,5 @@
 import React from "react";
+import HelpIcon from "./HelpIcon.jsx";
 
 function RadioOption({
                          name,
@@ -10,14 +11,7 @@ function RadioOption({
                          required = false
                      }) {
     const isChecked = selectedValue === value;
-    const helpText = helpLabel? <button
-        type="button"
-        className="btn btn-sm btn-outline-secondary rounded-circle p-0 d-inline-flex justify-content-center align-items-center"
-        style={{ width: "1.5rem", height: "1.5rem" }}
-        title={helpLabel}
-    >
-        i
-    </button> : ''
+    const helpText = helpLabel? <HelpIcon helpLabel={ helpLabel } /> : ''
 
     return (
         <div className="form-check">
