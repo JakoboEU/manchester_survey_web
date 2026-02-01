@@ -73,7 +73,7 @@ function HabitatRanking({personId, accessToken}) {
                     setQuestion('Click the image that looks like it would support more wildlife (birds, pollinators, plants):')
                     break;
                 case 'safety':
-                    setQuestion('Click the image where you’d feel more comfortable walking — even at dusk:')
+                    setQuestion('Click the image of the city place where you’d feel more comfortable walking — even at dusk:')
                     break;
                 case 'living':
                     setQuestion('Click the image that would make you more likely to buy a home nearby:')

@@ -155,7 +155,7 @@ function App() {
                 onContinue={handleContinueToSurvey}
                 captchaRequired={false}
                 title="Thank you"
-                text="Your demographic responses have been recorded. Click continue to the main part of the survey. Rank as many image pairs as you like." />
+                text="Your demographic responses have been recorded. Click continue to start ranking image pairs. We’ll keep asking until you choose to stop." />
         );
     } else if (pageState === PageState.RETURNED_USER) {
         content = (
