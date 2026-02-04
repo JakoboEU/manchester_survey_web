@@ -1,12 +1,16 @@
-import React, { useState, useEffect }  from "react";
-import {supabase, useSupabaseError} from "../lib/supabaseClient";
-import HabitatImage from "./HabitatImage.jsx";
-import "./HabitatRanking.css"
+import React, { useState, useEffect, useRef }  from "react";
+import { supabase, useSupabaseError } from "../lib/supabaseClient";
+import HabitatRankingPanel from "./HabitatRankingPanel.jsx";
+import ContinueForm from "./ContinueForm.jsx"
 
 function HabitatRanking({personId, accessToken}) {
     const HOLDING_IMAGE = "./images/holding.png"
+    const CLICKS_FOR_EARLY_MILESTONE_MESSAGE = 5
+    const CLICKS_BETWEEN_MILESTONE_MESSAGES = 10
+
     const [error, setError] = useState(null);
     const [rankHabitat, setRankHabitat] = useState(null);
+    const [milestoneMessage, setMilestoneMessage] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const [habitatImage1, setHabitatImage1] = useState(HOLDING_IMAGE);
@@ -14,6 +18,48 @@ function HabitatRanking({personId, accessToken}) {
     const [question, setQuestion] = useState('');
     const [questionId, setQuestionId] = useState('');
     const { wrapResult } = useSupabaseError()
+
+    const numberOfRankingsCompleted = useRef(0);
+    const numberOfMilestoneMessagesShown = useRef(0);
+
+    const milestoneMessages = [
+         {
+           title: "How the ranking works",
+           body: "This survey uses an Elo-style ranking algorithm (originally designed for chess). Each time you choose between two places, the scores update and you’re shown another close match-up — that helps the ordering settle quickly with fewer comparisons.",
+         },
+         {
+           title: "Your answers are saved",
+           body: "Your choice is stored after every click. There’s no fixed finish line — the ranking can continue indefinitely — so stop whenever you’ve had enough. Even a few minutes is genuinely useful.",
+         },
+         {
+           title: "Quick tip: trust your instinct",
+           body: "There’s no right or wrong answer — go with your first impression for each question. If a pair feels similar, pick the one you slightly prefer (or that best matches the specific question you’re answering).",
+         },
+         {
+           title: "Share if you can",
+           body: "If you’re happy to, sharing the survey helps us reach a wider range of people and neighbourhoods — which makes the results more representative and useful for planning decisions.",
+         },
+         {
+            title: "Why the images start to look similar",
+            body: "If the pairs feel increasingly similar, that’s expected — it means the ranking is narrowing in and fine-tuning the order. At that point, stopping is totally fine.",
+         },
+         {
+           title: "Three different lenses",
+           body: "You’re answering three questions about safety, desirability, and biodiversity perceptions. It’s totally normal if your answers differ across these.",
+         },
+         {
+           title: "Where these places come from",
+           body: "All images come from 411 green patches randomly selected across Manchester. They were visited over 2 years and surveyed in the field for around 100 different bird, insect, and plant species.",
+         },
+         {
+           title: "Habitat types",
+           body: "Those 411 patches are grouped into 9 habitat types (e.g., parks, verges, woodland, scrub, and others). We’re testing how perceptions change across habitat types and what features seem to matter most.",
+         },
+         {
+           title: "Why this matters",
+           body: "These results help connect public perceptions (safety, desirability, biodiversity) with real ecological survey data. That evidence can support better greenspace design and management for both people and wildlife.",
+         },
+    ];
 
     async function loadNextPair(pairSubmission) {
         setError(null);
@@ -86,49 +132,63 @@ function HabitatRanking({personId, accessToken}) {
         }
     }, [rankHabitat]);
 
+    function getNextMilestoneMessage(numberOfClicks) {
+        if (!Number.isFinite(numberOfClicks) || numberOfClicks <= 0) return null;
+
+        const showMilestoneMessage =
+            numberOfClicks === CLICKS_FOR_EARLY_MILESTONE_MESSAGE ||
+            (numberOfClicks > CLICKS_FOR_EARLY_MILESTONE_MESSAGE && numberOfClicks % CLICKS_BETWEEN_MILESTONE_MESSAGES === 0);
+
+        if (!showMilestoneMessage) {
+            return null;
+        }
+
+        numberOfMilestoneMessagesShown.current += 1
+
+        const idx = (numberOfMilestoneMessagesShown.current - 1) % milestoneMessages.length;
+        return milestoneMessages[idx];
+    }
+
     function handleImageClick(personId, habitatWinner, habitatLoser) {
         if (!loading) {
             setLoading(true)
             setHabitatImage1(HOLDING_IMAGE)
             setHabitatImage2(HOLDING_IMAGE)
             setQuestion('')
+
+            numberOfRankingsCompleted.current += 1
+            setMilestoneMessage(getNextMilestoneMessage(numberOfRankingsCompleted.current))
+
             loadNextPair({personId, battle: {habitatWinner: habitatWinner, habitatLoser: habitatLoser, question: questionId}});
         }
     }
 
-    return (
-        <div className="habitat-ranking card-body p-4">
-            <h1 className="h4 mb-3 text-center">City Nature Choices</h1>
-            {error ? (
-                <div className="alert alert-danger">
-                    {error}
-                </div>
-            ) : (
-                <>
-                    <div className="habitat-ranking-question-container">
-                        <p className="habitat-ranking-question mb-4">
-                            {question}
-                        </p>
-                    </div>
-                    <HabitatImage
-                        src={habitatImage1}
-                        habitatWinner={rankHabitat? rankHabitat.nextHabitat1 : null}
-                        habitatLoser={rankHabitat? rankHabitat.nextHabitat2 : null}
-                        personId={personId}
-                        onClick={handleImageClick}
-                    />
-                    <hr />
-                    <HabitatImage
-                        src={habitatImage2}
-                        habitatWinner={rankHabitat? rankHabitat.nextHabitat2 : null}
-                        habitatLoser={rankHabitat? rankHabitat.nextHabitat1 : null}
-                        personId={personId}
-                        onClick={handleImageClick}
-                    />
-                </>
-            )}
-        </div>
-    )
+    function continueRankingClick() {
+        setMilestoneMessage(null)
+    }
+
+    if (milestoneMessage != null) {
+        return (
+            <ContinueForm
+                captchaRequired = {false}
+                onContinue = {continueRankingClick}
+                title ={milestoneMessage.title}
+                text = {milestoneMessage.body}
+            />
+        )
+    } else {
+        return (
+            <HabitatRankingPanel
+                error = {error}
+                question = {question}
+                rankHabitat = {rankHabitat}
+                habitatImage1 = {habitatImage1}
+                habitatImage2 = {habitatImage2}
+                handleImageClick = {handleImageClick}
+                personId = {personId}
+            />
+        )
+    }
 }
 
 export default HabitatRanking;
