@@ -41,6 +41,9 @@ function PolicyForm({ onAccepted }) {
                                     deleted after submission, and
                                 </li>
                                 <li>you consent to take part.</li>
+                                <li className="small text-muted">
+                                    If you accessed this survey via Survey Swap; the completion code will be revealed after 40 choices.
+                                </li>
                             </ul>
                         </label>
                         <p>
