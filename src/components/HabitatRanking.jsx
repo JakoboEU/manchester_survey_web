@@ -40,6 +40,23 @@ function HabitatRanking({personId, accessToken}) {
            body: "If you’re happy to, sharing the survey helps us reach a wider range of people and neighbourhoods — which makes the results more representative and useful for planning decisions.",
          },
          {
+            title: "Survey Swap!",
+            body: (
+                <>
+                    <p>
+                        The following code gives you Karma that can be used to get free research participants at SurveySwap.io.
+                    </p>
+                    <p>
+                        Go to:
+                        <a href="https://surveyswap.io/sr/QKW7-ZEU5-3S0R">https://surveyswap.io/sr/QKW7-ZEU5-3S0R</a>
+                    </p>
+                    <p>
+                        Or, alternatively, enter the code manually:
+                        <pre>QKW7-ZEU5-3S0R</pre>
+                    </p>
+            </>)
+         },
+         {
             title: "Why the images start to look similar",
             body: "If the pairs feel increasingly similar, that’s expected — it means the ranking is narrowing in and fine-tuning the order. At that point, stopping is totally fine.",
          },
