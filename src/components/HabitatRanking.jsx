@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef }  from "react";
 import { supabase, useSupabaseError } from "../lib/supabaseClient";
 import HabitatRankingPanel from "./HabitatRankingPanel.jsx";
 import ContinueForm from "./ContinueForm.jsx"
+import { Affiliate } from "../lib/affiliate.js";
 
-function HabitatRanking({personId, accessToken}) {
+function HabitatRanking({personId, accessToken, affiliate}) {
     const HOLDING_IMAGE = "./images/holding.png"
     const CLICKS_FOR_EARLY_MILESTONE_MESSAGE = 5
     const CLICKS_BETWEEN_MILESTONE_MESSAGES = 10
@@ -22,6 +23,25 @@ function HabitatRanking({personId, accessToken}) {
     const numberOfRankingsCompleted = useRef(0);
     const numberOfMilestoneMessagesShown = useRef(0);
 
+    const surveySwapMilestoneMessage = {
+        title: "Survey Swap!",
+        body: (
+            <>
+                <p>
+                    The following code gives you Karma that can be used to get free research participants at SurveySwap.io.
+                </p>
+                <p>
+                    Go to:
+                    <a href="https://surveyswap.io/sr/QKW7-ZEU5-3S0R">https://surveyswap.io/sr/QKW7-ZEU5-3S0R</a>
+                </p>
+                <p>
+                    Or, alternatively, enter the code manually:
+                    <pre>QKW7-ZEU5-3S0R</pre>
+                </p>
+        </>)
+
+     };
+
     const milestoneMessages = [
          {
            title: "How the ranking works",
@@ -39,23 +59,7 @@ function HabitatRanking({personId, accessToken}) {
            title: "Share if you can",
            body: "If you’re happy to, sharing the survey helps us reach a wider range of people and neighbourhoods — which makes the results more representative and useful for planning decisions.",
          },
-         {
-            title: "Survey Swap!",
-            body: (
-                <>
-                    <p>
-                        The following code gives you Karma that can be used to get free research participants at SurveySwap.io.
-                    </p>
-                    <p>
-                        Go to:
-                        <a href="https://surveyswap.io/sr/QKW7-ZEU5-3S0R">https://surveyswap.io/sr/QKW7-ZEU5-3S0R</a>
-                    </p>
-                    <p>
-                        Or, alternatively, enter the code manually:
-                        <pre>QKW7-ZEU5-3S0R</pre>
-                    </p>
-            </>)
-         },
+         ...(affiliate === Affiliate.SURVEYSWAP ? [surveySwapMilestoneMessage] : []),
          {
             title: "Why the images start to look similar",
             body: "If the pairs feel increasingly similar, that’s expected — it means the ranking is narrowing in and fine-tuning the order. At that point, stopping is totally fine.",

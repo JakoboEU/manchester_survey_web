@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Affiliate } from "../lib/affiliate.js";
 
-function PolicyForm({ onAccepted }) {
+function PolicyForm({ onAccepted, affiliate }) {
     const [checked, setChecked] = useState(false);
 
     function handleSubmit(event) {
@@ -41,9 +42,11 @@ function PolicyForm({ onAccepted }) {
                                     deleted after submission, and
                                 </li>
                                 <li>you consent to take part.</li>
-                                <li className="small text-muted">
-                                    If you accessed this survey via Survey Swap; the completion code will be revealed after 40 choices.
-                                </li>
+                                {affiliate === Affiliate.SURVEYSWAP && (
+                                    <li className="small text-muted">
+                                        If you accessed this survey via Survey Swap; the completion code will be revealed after 40 choices.
+                                    </li>
+                                )}
                             </ul>
                         </label>
                         <p>

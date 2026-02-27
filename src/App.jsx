@@ -6,7 +6,7 @@ import ContinueForm from "./components/ContinueForm.jsx";
 import {signInAnonymously, supabase, useSupabaseError} from "./lib/supabaseClient.js";
 import PageShimmer from "./components/PageShimmer.jsx";
 import {fetchPersonId, storePersonId} from "./lib/personLocalRepository.js";
-import { Affiliate, parseAffiliateFromSearch } from "./lib/affiliate.js";
+import { parseAffiliateFromSearch } from "./lib/affiliate.js";
 
 const enumValue = (name) => Object.freeze({toString: () => name});
 
@@ -142,7 +142,12 @@ function App() {
     let content;
 
     if (pageState === PageState.ACCEPT_POLICY) {
-        content = <PolicyForm onAccepted={handlePolicyAccepted} />;
+        content = (
+            <PolicyForm
+                onAccepted={handlePolicyAccepted}
+                affiliate={affiliate}
+            />
+        );
     } else if (pageState === PageState.DEMOGRAPHICS) {
         content = (
             <DemographicsForm
