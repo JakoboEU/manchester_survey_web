@@ -6,6 +6,7 @@ import ContinueForm from "./components/ContinueForm.jsx";
 import {signInAnonymously, supabase, useSupabaseError} from "./lib/supabaseClient.js";
 import PageShimmer from "./components/PageShimmer.jsx";
 import {fetchPersonId, storePersonId} from "./lib/personLocalRepository.js";
+import { Affiliate, parseAffiliateFromSearch } from "./lib/affiliate.js";
 
 const enumValue = (name) => Object.freeze({toString: () => name});
 
@@ -36,6 +37,10 @@ function App() {
     useEffect(() => {
         storePersonId(personId);
     }, [personId]);
+
+    const [affiliate] = useState(() => {
+        return parseAffiliateFromSearch(window.location?.search);
+    });
 
     const [demographics, setDemographics] = useState({
         gender: "",
@@ -173,7 +178,7 @@ function App() {
                 </div>
             </div>
     } else if (pageState === PageState.SURVEY) {
-        content = <HabitatRanking personId={personId} accessToken={accessToken} />
+        content = <HabitatRanking personId={personId} accessToken={accessToken} affiliate={affiliate} />
     } else {
         content = <div className="card-body p-4">
                     <h1 className="h4 mb-3 text-center">City Nature Choices: Page Error</h1>
