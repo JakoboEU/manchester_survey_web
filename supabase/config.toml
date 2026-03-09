@@ -191,7 +191,7 @@ web3 = 30
 [auth.captcha]
 enabled = true
 provider = "turnstile"
-secret = "KEY"
+secret = "0x4AAAAAACKMJb6DM9X0g92MAdzHRJ6JE_E"
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.
