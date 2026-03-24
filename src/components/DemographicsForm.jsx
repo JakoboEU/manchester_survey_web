@@ -171,7 +171,7 @@ function DemographicsForm({ formData, onChange, enableSubmit, onSubmit, onSkipDe
                 <span className="text-muted text-center mb-4">
                     <Turnstile sitekey="0x4AAAAAACKMJXal2NhKyPKL" onVerify={(token) => { setCaptchaToken(token) }}/>
                 </span>
-                <button type="submit" className="btn btn-primary w-100" disabled={!enableSubmit || captchaToken == null}>
+                <button type="submit" className="btn btn-primary w-100" disabled={!enableSubmit || captchaToken == null} data-pirsch-event="submit-demographics">
                     Continue
                 </button>
             </form>

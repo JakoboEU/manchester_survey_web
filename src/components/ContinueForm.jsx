@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Turnstile from "react-turnstile";
 
-function ContinueForm({captchaRequired, onContinue, title, text}) {
+function ContinueForm({captchaRequired, onContinue, title, text, eventName}) {
     const [captchaToken, setCaptchaToken] = useState()
 
     const captchaSiteKey = import.meta.env.VITE_CAPTCHA_SITE_KEY;
@@ -26,7 +26,7 @@ function ContinueForm({captchaRequired, onContinue, title, text}) {
                     <span className="text-muted text-center mb-4">
                         <Turnstile sitekey="0x4AAAAAACKMJXal2NhKyPKL" onVerify={(token) => { setCaptchaToken(token) }}/>
                     </span>
-                    <button type="submit" className="btn btn-primary w-100" disabled={!captchaToken}>
+                    <button type="submit" className="btn btn-primary w-100" disabled={!captchaToken} data-pirsch-event={eventName}>
                         Continue
                     </button>
                 </form>
@@ -40,7 +40,7 @@ function ContinueForm({captchaRequired, onContinue, title, text}) {
                     {text}
                 </p>
                 <form onSubmit={continueSubmit} noValidate>
-                    <button type="submit" className="btn btn-primary w-100">
+                    <button type="submit" className="btn btn-primary w-100" data-pirsch-event={eventName}>
                         Continue
                     </button>
                 </form>

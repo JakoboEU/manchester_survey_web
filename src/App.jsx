@@ -165,7 +165,8 @@ function App() {
                 onContinue={handleContinueToSurvey}
                 captchaRequired={false}
                 title="Thank you"
-                text="Your demographic responses have been recorded. Click continue to start ranking image pairs. We’ll keep asking until you choose to stop." />
+                text="Your demographic responses have been recorded. Click continue to start ranking image pairs. We’ll keep asking until you choose to stop."
+                eventName="ctn-demographics-recorded"/>
         );
     } else if (pageState === PageState.RETURNED_USER) {
         content = (
@@ -173,7 +174,8 @@ function App() {
                 onContinue={handleContinueToSurveyWithCaptcha}
                 captchaRequired={true}
                 title="Welcome Back"
-                text="Click continue to the main part of the survey." />
+                text="Click continue to the main part of the survey."
+                eventName="ctn-welcome-back" />
         );
     } else if (pageState === PageState.ERROR) {
         content = <div className="card-body p-4">

@@ -195,6 +195,7 @@ function HabitatRanking({personId, accessToken, affiliate}) {
                 onContinue = {continueRankingClick}
                 title ={milestoneMessage.title}
                 text = {milestoneMessage.body}
+                eventName = "ctn-milestone-message"
             />
         )
     } else {

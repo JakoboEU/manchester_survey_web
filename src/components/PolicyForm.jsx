@@ -65,6 +65,7 @@ function PolicyForm({ onAccepted, affiliate }) {
                         type="submit"
                         className="btn btn-primary w-100"
                         disabled={!checked}
+                        data-pirsch-event="agree-terms"
                     >
                         Continue
                     </button>
