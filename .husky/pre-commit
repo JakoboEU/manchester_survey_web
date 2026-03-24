@@ -6,6 +6,7 @@ npm run build || exit 1
 echo "citynaturechoices.org" > docs/CNAME
 
 cp learn_more.html docs/learn_more.html
+cp learn_more2.html docs/learn_more2.html
 cp terms.html docs/terms.html
 
 # If build succeeds, include docs/ in the commit
