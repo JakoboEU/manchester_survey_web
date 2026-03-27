@@ -139,8 +139,9 @@ Deno.serve(async (req) => {
         });
     }
 
-    const {data, error} = await supabase.rpc("next_pair_for_person", {
+    const {data, error} = await supabase.rpc("next_pair_for_person2", {
         p_person_id: json.personId,
+        p_last_question_id:  json.battle?.question !== undefined ? String(json.battle.question) : null
     });
 
     if (error) return new Response(JSON.stringify({ok: false, error: error.message}), {
