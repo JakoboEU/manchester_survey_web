@@ -38,4 +38,5 @@ kotlin {
 
 dependencies {
     implementation("org.testcontainers:postgresql:1.20.0")
+    implementation("org.slf4j:slf4j-simple:2.0.13")
 }
