@@ -4,14 +4,14 @@ import org.testcontainers.shaded.com.google.common.collect.ImmutableList
 import java.util.Random
 import java.util.stream.IntStream
 
-class PersonQueue(val queue: ImmutableList<String>, val random: Random = Random()) : Iterable<String> {
+class PersonQueue(val queue: ImmutableList<Person>, val random: Random = Random()) : Iterable<Person> {
 
     class PersonQueueBuilder {
-        private val queue: MutableList<String> = mutableListOf()
+        private val queue: MutableList<Person> = mutableListOf()
 
         fun addPerson(personId: String, expectedRankings: Int): PersonQueueBuilder {
             IntStream.range(0, expectedRankings)
-                .forEach { queue.add(personId) }
+                .forEach { queue.add(Person(personId)) }
             return this
         }
 
@@ -26,7 +26,7 @@ class PersonQueue(val queue: ImmutableList<String>, val random: Random = Random(
         return PersonQueue(ImmutableList.copyOf(shuffledQueue), random)
     }
 
-    override fun iterator(): Iterator<String> {
+    override fun iterator(): Iterator<Person> {
         return queue.iterator()
     }
 

@@ -4,10 +4,13 @@ import java.sql.Connection
 import java.util.Random
 
 class Replayer(val people: PersonQueue, val conn: Connection) {
+    val random = Random()
+
     fun replay(numberOfReplays: Int) {
-        val random = Random()
-        println("Resetting rankings to 0 on " + conn.prepareStatement("UPDATE person SET rankings = 0;").executeUpdate() + " rows.")
-        println("Resetting habitat rankings on " + conn.prepareStatement("UPDATE habitat SET mu = 1500, rankings = 0;").executeUpdate() + " rows.")
+        val numberOfPersonRowsReset = conn.prepareStatement("UPDATE person SET rankings = 0;").executeUpdate()
+        val numberOfHabitatRowsReset = conn.prepareStatement("UPDATE habitat SET mu = 1500, rankings = 0;").executeUpdate()
+        println("Resetting rankings to 0 on $numberOfPersonRowsReset rows.")
+        println("Resetting habitat rankings on $numberOfHabitatRowsReset rows.")
 
         for (i in 1..numberOfReplays) {
             val replay = Replay(people.shuffle(), conn, random)

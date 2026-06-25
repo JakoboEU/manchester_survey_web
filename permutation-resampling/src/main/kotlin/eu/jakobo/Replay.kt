@@ -5,15 +5,14 @@ import java.util.Random
 
 class Replay(val people: PersonQueue, val conn: Connection, val random: Random) {
     fun performRankings() {
-        val lastQuestion = mutableMapOf<String,String>()
+        val lastQuestionByPerson = mutableMapOf<Person,String>()
 
         for (p in people) {
             conn.prepareStatement(
-                "SELECT habitat1_id, habitat2_id, question_id " +
-                        "FROM next_pair_for_person2(?::uuid, ?::text)"
+                "SELECT habitat1_id, habitat2_id, question_id FROM next_pair_for_person2(?::uuid, ?::text)"
             ).use { ps ->
                 ps.setObject(1, p)
-                ps.setString(2, lastQuestion[p])
+                ps.setString(2, lastQuestionByPerson[p])
 
                 ps.executeQuery().use { rs ->
                     if (rs.next()) {
@@ -34,7 +33,7 @@ class Replay(val people: PersonQueue, val conn: Connection, val random: Random) 
                             eloPs.execute()
                         }
 
-                        lastQuestion[p] = questionId
+                        lastQuestionByPerson[p] = questionId
                     }
                 }
             }
