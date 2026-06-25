@@ -4,7 +4,7 @@ import org.testcontainers.shaded.com.google.common.collect.ImmutableList
 import java.util.Random
 import java.util.stream.IntStream
 
-class PersonQueue(val queue: ImmutableList<String>) {
+class PersonQueue(val queue: ImmutableList<String>, val random: Random = Random()) : Iterable<String> {
 
     class PersonQueueBuilder {
         private val queue: MutableList<String> = mutableListOf()
@@ -16,13 +16,18 @@ class PersonQueue(val queue: ImmutableList<String>) {
         }
 
         fun build(): PersonQueue {
-            queue.shuffle(Random())
             return PersonQueue(ImmutableList.copyOf(queue))
         }
     }
 
-    fun personIdAt(index: Int): String {
-        return queue[index]
+    fun shuffle(): PersonQueue {
+        val shuffledQueue = queue.toMutableList()
+        shuffledQueue.shuffle(random)
+        return PersonQueue(ImmutableList.copyOf(shuffledQueue), random)
+    }
+
+    override fun iterator(): Iterator<String> {
+        return queue.iterator()
     }
 
     fun queueSize(): Int {

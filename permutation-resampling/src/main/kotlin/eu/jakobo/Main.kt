@@ -30,7 +30,9 @@ fun main() {
         }
         val personQueue = personQueueBuilder.build()
         println("Loaded " + personQueue.queueSize() + " rankings to perform onto queue.")
-        println("Resetting rankings to 0 on " + conn.prepareStatement("UPDATE person SET rankings = 0;").executeUpdate() + " rows.")
+
+        val replayer = Replayer(personQueue, conn)
+        replayer.replay(1)
     } finally {
         postgres.stop()
     }
