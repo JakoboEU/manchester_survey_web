@@ -62,7 +62,7 @@ class BootstrapDb(val conn: Connection) {
     }
 
     private fun copyCsvIntoTable(
-        conn: java.sql.Connection,
+        conn: Connection,
         csvContent: String,
         tableName: String,
         columns: List<String>

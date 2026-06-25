@@ -1,8 +1,10 @@
 package eu.jakobo
 
 import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.shaded.com.google.common.collect.ImmutableList
+import java.nio.file.Path
 import java.sql.DriverManager
+
+const val BACKUP_TO_USE = "20260608"
 
 fun main() {
     println("Starting postgres.")
@@ -18,7 +20,7 @@ fun main() {
     try {
         val conn = DriverManager.getConnection(postgres.jdbcUrl, postgres.username, postgres.password)
         val bootstrapDb = BootstrapDb(conn)
-        bootstrapDb.bootstrap("20260608")
+        bootstrapDb.bootstrap(BACKUP_TO_USE)
 
         val personQueueBuilder = PersonQueue.PersonQueueBuilder()
         conn.prepareStatement("SELECT person_id, rankings FROM person;").executeQuery().use { rs ->
@@ -31,8 +33,8 @@ fun main() {
         val personQueue = personQueueBuilder.build()
         println("Loaded " + personQueue.queueSize() + " rankings to perform onto queue.")
 
-        val replayer = Replayer(personQueue, conn)
-        replayer.replay(1)
+        val replayer = Replayer(personQueue, conn, Path.of("..", "supabase", "backups", BACKUP_TO_USE, "resampled"))
+        replayer.replay(3)
     } finally {
         postgres.stop()
     }

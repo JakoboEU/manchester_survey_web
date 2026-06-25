@@ -4,7 +4,7 @@ import java.sql.Connection
 import java.util.Random
 
 class Replay(val people: PersonQueue, val conn: Connection, val random: Random) {
-    fun performRankings() {
+    fun resample() {
         val lastQuestionByPerson = mutableMapOf<Person,String>()
 
         for (p in people) {
