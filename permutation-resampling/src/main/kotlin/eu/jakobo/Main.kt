@@ -3,6 +3,7 @@ package eu.jakobo
 import org.testcontainers.containers.PostgreSQLContainer
 import java.nio.file.Path
 import java.sql.DriverManager
+import kotlin.io.path.createDirectories
 
 const val BACKUP_TO_USE = "20260608"
 
@@ -33,7 +34,9 @@ fun main() {
         val personQueue = personQueueBuilder.build()
         println("Loaded " + personQueue.queueSize() + " rankings to perform onto queue.")
 
-        val replayer = Replayer(personQueue, conn, Path.of("..", "supabase", "backups", BACKUP_TO_USE, "resampled"))
+        val csvPath = Path.of("..", "supabase", "backups", BACKUP_TO_USE, "resampled")
+        csvPath.createDirectories()
+        val replayer = Replayer(personQueue, conn, csvPath)
         replayer.replay(3)
     } finally {
         postgres.stop()
