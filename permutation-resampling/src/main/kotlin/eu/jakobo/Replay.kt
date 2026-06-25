@@ -11,7 +11,7 @@ class Replay(val people: PersonQueue, val conn: Connection, val random: Random) 
             conn.prepareStatement(
                 "SELECT habitat1_id, habitat2_id, question_id FROM next_pair_for_person2(?::uuid, ?::text)"
             ).use { ps ->
-                ps.setObject(1, p)
+                ps.setObject(1, p.toString())
                 ps.setString(2, lastQuestionByPerson[p])
 
                 ps.executeQuery().use { rs ->
