@@ -26,7 +26,7 @@ class Replay(val people: PersonQueue, val conn: Connection, val random: Random) 
                         conn.prepareStatement(
                             "SELECT apply_habitat_elo_rpc(?::uuid, ?::text, ?::int, ?::int)"
                         ).use { eloPs ->
-                            eloPs.setObject(1, p)
+                            eloPs.setObject(1, p.toString())
                             eloPs.setString(2, questionId)
                             eloPs.setInt(3, winner)
                             eloPs.setInt(4, loser)
