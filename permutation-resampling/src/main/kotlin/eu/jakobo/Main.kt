@@ -1,9 +1,13 @@
 package eu.jakobo
 
 import org.testcontainers.containers.PostgreSQLContainer
+import java.io.StringReader
 import java.nio.file.Files
 import java.nio.file.Path
 import java.sql.DriverManager
+import kotlin.jvm.java
+import org.postgresql.copy.CopyManager
+import org.postgresql.core.BaseConnection
 
 fun main() {
     println("Starting postgres.")
@@ -16,14 +20,14 @@ fun main() {
     postgres.start()
     println("Postgres started.")
 
-    val sqlPath = Path.of("..", "data", "tables.sql").normalize()
-    require(Files.exists(sqlPath)) { "Missing SQL file at: ${sqlPath.toAbsolutePath()}" }
-    val createTableSql = Files.readString(sqlPath)
-
-    print(createTableSql)
     try {
         val conn = DriverManager.getConnection(postgres.jdbcUrl, postgres.username, postgres.password)
-        conn.createStatement().execute(createTableSql)
+        val bootstrapDb = BootstrapDb(conn)
+        bootstrapDb.bootstrap()
+
+        println(
+            conn.prepareStatement("SELECT * FROM demographics;").executeQuery()
+        )
     } finally {
         postgres.stop()
     }
