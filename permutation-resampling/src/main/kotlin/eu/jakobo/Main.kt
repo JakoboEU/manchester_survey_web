@@ -6,6 +6,7 @@ import java.sql.DriverManager
 import kotlin.io.path.createDirectories
 
 const val BACKUP_TO_USE = "20260608"
+const val NUMBER_OF_PERMUTATIONS = 500
 
 fun main() {
     println("Starting postgres.")
@@ -37,7 +38,7 @@ fun main() {
         val csvPath = Path.of("..", "supabase", "backups", BACKUP_TO_USE, "resampled")
         csvPath.createDirectories()
         val replayer = Replayer(personQueue, conn, csvPath)
-        replayer.replay(3)
+        replayer.replay(NUMBER_OF_PERMUTATIONS)
     } finally {
         postgres.stop()
     }
