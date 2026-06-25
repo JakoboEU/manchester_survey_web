@@ -8,47 +8,65 @@ import java.nio.file.Path
 import java.sql.Connection
 
 class BootstrapDb(val conn: Connection) {
-    fun bootstrap() {
+    fun bootstrap(backupDirectory: String) {
         conn.createStatement().execute(loadDataFromFile("tables.sql"))
         conn.createStatement().execute(loadDataFromFile("apply_habitat_elo.sql"))
         conn.createStatement().execute(loadDataFromFile("next_pair_for_person2.sql"))
 
         copyCsvIntoTable(
             conn = conn,
-            csvFileName = "demographics.csv",
+            csvContent = loadDataFromFile("demographics.csv"),
             tableName = "demographics",
             columns = listOf("demographic", "demographic_value")
         )
 
         copyCsvIntoTable(
             conn = conn,
-            csvFileName = "questions.csv",
+            csvContent = loadDataFromFile("questions.csv"),
             tableName = "questions",
             columns = listOf("question_id")
         )
 
         copyCsvIntoTable(
             conn = conn,
-            csvFileName = "habitat.csv",
+            csvContent = loadDataFromFile("habitat.csv"),
             tableName = "habitat",
             columns = listOf("demographic","demographic_value","habitat_id","question_id")
         )
+
+        copyCsvIntoTable(
+            conn = conn,
+            csvContent = loadBackupFromFile("person.csv", backupDirectory),
+            tableName = "person",
+            columns = listOf("person_id","rankings")
+        )
+
+        copyCsvIntoTable(
+            conn = conn,
+            csvContent = loadBackupFromFile("person_demographics.csv", backupDirectory),
+            tableName = "person_demographics",
+            columns = listOf("person_id", "demographic","demographic_value")
+        )
     }
 
-    private fun loadDataFromFile(filename: String): String? {
-        val sqlPath = Path.of("..", "data", filename).normalize()
-        require(Files.exists(sqlPath)) { "Missing file at: ${sqlPath.toAbsolutePath()}" }
-        val createTableSql = Files.readString(sqlPath)
-        return createTableSql
+    private fun loadBackupFromFile(filename: String, backupDirectory: String): String {
+        val filePath = Path.of("..", "supabase", "backups", backupDirectory, filename).normalize()
+        require(Files.exists(filePath)) { "Missing file at: ${filePath.toAbsolutePath()}" }
+        return Files.readString(filePath)
+    }
+
+    private fun loadDataFromFile(filename: String): String {
+        val filePath = Path.of("..", "data", filename).normalize()
+        require(Files.exists(filePath)) { "Missing file at: ${filePath.toAbsolutePath()}" }
+        return Files.readString(filePath)
     }
 
     private fun copyCsvIntoTable(
         conn: java.sql.Connection,
-        csvFileName: String,
+        csvContent: String,
         tableName: String,
         columns: List<String>
     ) {
-        val csvContent = loadDataFromFile(csvFileName)
         val copySql = buildString {
             append("COPY ")
             append(tableName)

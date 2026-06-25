@@ -1,13 +1,7 @@
 package eu.jakobo
 
 import org.testcontainers.containers.PostgreSQLContainer
-import java.io.StringReader
-import java.nio.file.Files
-import java.nio.file.Path
 import java.sql.DriverManager
-import kotlin.jvm.java
-import org.postgresql.copy.CopyManager
-import org.postgresql.core.BaseConnection
 
 fun main() {
     println("Starting postgres.")
@@ -23,11 +17,19 @@ fun main() {
     try {
         val conn = DriverManager.getConnection(postgres.jdbcUrl, postgres.username, postgres.password)
         val bootstrapDb = BootstrapDb(conn)
-        bootstrapDb.bootstrap()
+        bootstrapDb.bootstrap("20260608")
 
-        println(
-            conn.prepareStatement("SELECT * FROM demographics;").executeQuery()
-        )
+        val personQueue = PersonQueue()
+        conn.prepareStatement("SELECT person_id, rankings FROM person;").executeQuery().use { rs ->
+            while (rs.next()) {
+                val personId = rs.getString("person_id")
+                val rankings = rs.getInt("rankings")
+                personQueue.addPerson(personId, rankings)
+            }
+        }
+
+        println("Loaded " + personQueue.queueSize() + " rankings to perform onto queue.")
+        println("Resetting rankings to 0 on " + conn.prepareStatement("UPDATE person SET rankings = 0;").executeUpdate() + " rows.")
     } finally {
         postgres.stop()
     }
