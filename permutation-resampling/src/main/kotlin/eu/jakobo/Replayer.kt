@@ -8,25 +8,31 @@ import java.util.Random
 import java.util.UUID
 
 class Replayer(val people: PersonQueue, val conn: Connection, val csvPath: Path) {
-    val random = Random()
+    val resetPersonRankingsPs = conn.prepareStatement("UPDATE person SET rankings = 0;")
+    val resetHabitatRankingsPs = conn.prepareStatement("UPDATE habitat SET mu = 1500, rankings = 0;")
+    val fetchHabitatRankingsPs = conn.prepareStatement("SELECT demographic, demographic_value, habitat_id, question_id, mu, rankings FROM habitat")
+
+    val replay = Replay(conn, Random())
 
     fun replay(numberOfReplays: Int) {
-        for (i in 1..numberOfReplays) {
-            val numberOfPersonRowsReset = conn.prepareStatement("UPDATE person SET rankings = 0;").executeUpdate()
-            val numberOfHabitatRowsReset = conn.prepareStatement("UPDATE habitat SET mu = 1500, rankings = 0;").executeUpdate()
-            println("Resetting rankings to 0 on $numberOfPersonRowsReset rows.")
-            println("Resetting habitat rankings on $numberOfHabitatRowsReset rows.")
+        conn.autoCommit = false
+        try {
+            for (i in 1..numberOfReplays) {
+                val numberOfPersonRowsReset = resetPersonRankingsPs.executeUpdate()
+                val numberOfHabitatRowsReset = resetHabitatRankingsPs.executeUpdate()
+                println("Resetting rankings to 0 on $numberOfPersonRowsReset rows.")
+                println("Resetting habitat rankings on $numberOfHabitatRowsReset rows.")
 
-            val replay = Replay(people.shuffle(), conn, random)
-            replay.resample()
+                replay.resample(people.shuffle())
 
-            conn.prepareStatement(
-                "SELECT demographic, demographic_value, habitat_id, question_id, mu, rankings FROM habitat"
-            ).executeQuery().use { rs ->
-                storeRankingPermutationResample(rs)
+                fetchHabitatRankingsPs.executeQuery().use { rs ->
+                    storeRankingPermutationResample(rs)
+                }
+                conn.commit()
+                println("Wrote replay $i to $csvPath")
             }
-
-            println("Wrote replay $i to $csvPath")
+        } finally {
+            conn.autoCommit = true
         }
     }
 

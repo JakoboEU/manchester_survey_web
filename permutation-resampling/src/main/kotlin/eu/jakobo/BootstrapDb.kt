@@ -10,6 +10,7 @@ import java.sql.Connection
 class BootstrapDb(val conn: Connection) {
     fun bootstrap(backupDirectory: String) {
         conn.createStatement().execute(loadDataFromFile("tables.sql"))
+        conn.createStatement().execute(loadDataFromFile("indexes.sql"))
         conn.createStatement().execute(loadDataFromFile("apply_habitat_elo.sql"))
         conn.createStatement().execute(loadDataFromFile("next_pair_for_person2.sql"))
 
@@ -27,6 +28,7 @@ class BootstrapDb(val conn: Connection) {
             columns = listOf("question_id")
         )
 
+        conn.createStatement().execute("alter table habitat set (fillfactor = 70);")
         copyCsvIntoTable(
             conn = conn,
             csvContent = loadDataFromFile("habitat.csv"),
