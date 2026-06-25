@@ -1,6 +1,7 @@
 package eu.jakobo
 
 import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.shaded.com.google.common.collect.ImmutableList
 import java.sql.DriverManager
 
 fun main() {
@@ -19,15 +20,15 @@ fun main() {
         val bootstrapDb = BootstrapDb(conn)
         bootstrapDb.bootstrap("20260608")
 
-        val personQueue = PersonQueue()
+        val personQueueBuilder = PersonQueue.PersonQueueBuilder()
         conn.prepareStatement("SELECT person_id, rankings FROM person;").executeQuery().use { rs ->
             while (rs.next()) {
                 val personId = rs.getString("person_id")
                 val rankings = rs.getInt("rankings")
-                personQueue.addPerson(personId, rankings)
+                personQueueBuilder.addPerson(personId, rankings)
             }
         }
-
+        val personQueue = personQueueBuilder.build()
         println("Loaded " + personQueue.queueSize() + " rankings to perform onto queue.")
         println("Resetting rankings to 0 on " + conn.prepareStatement("UPDATE person SET rankings = 0;").executeUpdate() + " rows.")
     } finally {
