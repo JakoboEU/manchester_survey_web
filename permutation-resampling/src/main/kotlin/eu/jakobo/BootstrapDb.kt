@@ -9,22 +9,10 @@ import java.sql.Connection
 
 class BootstrapDb(val conn: Connection) {
     fun bootstrap(backupDirectory: String) {
-        conn.createStatement().use { stmt ->
-            stmt.execute(loadDataFromFile("tables.sql"))
-            stmt.execute(loadDataFromFile("indexes.sql"))
-            stmt.execute(loadDataFromFile("apply_habitat_elo.sql"))
-            stmt.execute(loadDataFromFile("next_pair_for_person2.sql"))
-
-            // Create the permanent reference table for simulation shuffling
-            stmt.execute("""
-                CREATE TABLE IF NOT EXISTS person_baseline (
-                    person_id UUID PRIMARY KEY,
-                    rankings BIGINT DEFAULT 0
-                );
-            """.trimIndent())
-
-            stmt.execute(loadDataFromFile("run_single_resample_fully_internal.sql"))
-        }
+        conn.createStatement().execute(loadDataFromFile("tables.sql"))
+        conn.createStatement().execute(loadDataFromFile("indexes.sql"))
+        conn.createStatement().execute(loadDataFromFile("apply_habitat_elo.sql"))
+        conn.createStatement().execute(loadDataFromFile("next_pair_for_person2.sql"))
 
         copyCsvIntoTable(
             conn = conn,
@@ -40,6 +28,7 @@ class BootstrapDb(val conn: Connection) {
             columns = listOf("question_id")
         )
 
+        conn.createStatement().execute("alter table habitat set (fillfactor = 70);")
         copyCsvIntoTable(
             conn = conn,
             csvContent = loadDataFromFile("habitat.csv"),
@@ -52,13 +41,6 @@ class BootstrapDb(val conn: Connection) {
             csvContent = loadBackupFromFile("person.csv", backupDirectory),
             tableName = "person",
             columns = listOf("person_id","rankings")
-        )
-
-        copyCsvIntoTable(
-            conn = conn,
-            csvContent = loadBackupFromFile("person.csv", backupDirectory),
-            tableName = "person_baseline",
-            columns = listOf("person_id", "rankings")
         )
 
         copyCsvIntoTable(

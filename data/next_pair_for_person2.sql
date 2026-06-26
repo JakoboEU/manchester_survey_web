@@ -40,7 +40,6 @@ pairs as (
 select
     habitat1_id, habitat2_id, question_id
 from pairs
-where mu_diff = (select min(mu_diff) from pairs)
 order by mu_diff asc, random()
-limit 1;
+    limit 1;
 $$;
