@@ -9,7 +9,7 @@ import java.util.stream.Stream
 import kotlin.io.path.createDirectories
 
 const val BACKUP_TO_USE = "20260608"
-const val RESAMPLES = 980
+const val RESAMPLES = 1000
 
 private fun dataFile(filename: String) : Path {
     val filePath = Path.of("..", "data", filename).normalize()
