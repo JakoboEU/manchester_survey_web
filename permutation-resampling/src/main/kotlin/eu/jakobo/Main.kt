@@ -9,7 +9,7 @@ import java.util.stream.Stream
 import kotlin.io.path.createDirectories
 
 const val BACKUP_TO_USE = "20260608"
-const val NUMBER_OF_PERMUTATIONS = 100
+const val RESAMPLES = 980
 
 private fun dataFile(filename: String) : Path {
     val filePath = Path.of("..", "data", filename).normalize()
@@ -43,8 +43,6 @@ private fun loadAllDemographics(): List<DemographicValue> {
         return tuples;
     }
 }
-
-const val RESAMPLES = 2
 
 fun main() {
 
