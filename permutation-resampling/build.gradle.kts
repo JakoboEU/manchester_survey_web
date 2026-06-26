@@ -37,7 +37,6 @@ kotlin {
 }
 
 dependencies {
-    implementation("org.testcontainers:postgresql:1.20.0")
     implementation("org.slf4j:slf4j-simple:2.0.13")
-    implementation("org.postgresql:postgresql:42.7.4")
+    implementation("org.apache.commons:commons-csv:1.10.0")
 }
