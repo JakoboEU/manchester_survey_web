@@ -13,8 +13,8 @@ class DemographicHierarchies(val hierarchies: List<Hierarchy>) {
         }
     }
 
-    fun getQuestions(): Stream<Question> {
-        return hierarchies.stream().flatMap { it.getQuestions() }
+    fun getQuestions(excludedQuestionId: QuestionId?): Stream<Question> {
+        return hierarchies.stream().filter{ it.questionId != excludedQuestionId }.flatMap { it.getQuestions() }
     }
 
     fun update(answer: Answer) {

@@ -56,12 +56,14 @@ fun main() {
     for (i in 1..RESAMPLES) {
         val rankings = Rankings.buildHierarchies(allDemographics)
         val people = personQueue.shuffle()
+        val lastQuestionAsked: MutableMap<Person, QuestionId> = mutableMapOf()
 
         println("Starting ${i}th run of ${people.queueSize()} rankings")
         for (person in people) {
             val demographics = personDemographics.getDemographicsForPerson(person)
-            val nextQuestion = rankings.getNextQuestion(demographics)
+            val nextQuestion = rankings.getNextQuestion(demographics, lastQuestionAsked.get(person))
             rankings.update(nextQuestion.randomAnswer(), demographics)
+            lastQuestionAsked[person] = nextQuestion.questionId
         }
 
         val filePath: Path = csvPath.resolve("${UUID.randomUUID()}.csv")

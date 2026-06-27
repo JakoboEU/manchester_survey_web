@@ -3,11 +3,11 @@ package eu.jakobo
 import java.util.stream.Stream
 
 class Rankings(val rankings: Map<DemographicValue, DemographicHierarchies>) {
-    fun getNextQuestion(demographics: List<DemographicValue>): Question {
+    fun getNextQuestion(demographics: List<DemographicValue>, excludedQuestionId: QuestionId?): Question {
         val candidates = rankings.filter {
             demographics.contains(it.key)
         }.values.stream().flatMap {
-            it.getQuestions()
+            it.getQuestions(excludedQuestionId)
         }.sorted().toList()
 
         val minMu = candidates.min().muDiff
